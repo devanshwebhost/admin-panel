@@ -1,0 +1,23 @@
+/my-auth-app
+├── app/
+│   ├── api/
+│   │   ├── auth/[...nextauth]/route.js
+│   │   ├── signup/route.js
+│   │   ├── forgot-password/route.js
+│   │   ├── verify-otp/route.js
+│   │   ├── reset-password/route.js
+│   │   └── verify/route.js
+│   ├── dashboard/page.js
+│   ├── login/page.js
+│   ├── signup/page.js
+│   ├── forgot-password/page.js
+│   ├── verify-otp/page.js
+│   ├── reset-password/page.js
+│   └── verify/page.js
+├── components/
+├── lib/mongodb.js
+├── models/User.js
+├── public/
+├── styles/globals.css
+├── .env.local
+└── tailwind.config.js
