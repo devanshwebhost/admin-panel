@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import GroqChat from "@/components/GroqChat";
@@ -24,44 +24,64 @@ export default async function DashboardPage() {
   await connectDB();
   const user = await User.findOne({ email: session.user.email }).lean();
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <div className="bg-white shadow-md p-6 rounded-xl text-center max-w-sm w-full">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">User Not Found</h2>
+          <p className="text-sm text-gray-500 mb-4">Please contact support or try logging in again.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const cleanUser = {
+    _id: user._id?.toString(),
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone || "Not provided",
+    address: user.address || "Not provided",
+    emailVerified: user.emailVerified,
+    createdAt: user.createdAt?.toISOString(),
+    updatedAt: user.updatedAt?.toISOString()
+  };
+
   return (
-    <>    
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Welcome, {user.firstName} 👋</h2>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Email</label>
-            <p className="text-gray-800">{user.email}</p>
+    <>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">
+            Welcome, {cleanUser.firstName} 👋
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-600">Email</label>
+              <p className="text-gray-800">{cleanUser.email}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600">Phone</label>
+              <p className="text-gray-800">{cleanUser.phone}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600">Address</label>
+              <p className="text-gray-800">{cleanUser.address}</p>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Phone</label>
-            <p className="text-gray-800">{user.phone || 'Not provided'}</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Address</label>
-            <p className="text-gray-800">{user.address || 'Not provided'}</p>
+          <div className="mt-8">
+            <SignOutButton />
+            <DeleteAccountSection user={cleanUser} />
           </div>
         </div>
-
-        <form action="/api/auth/signout" method="post" className="mt-8">
-          {/* <button
-            type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-semibold transition shadow-lg"
-            >
-            Logout
-          </button> */}
-          <SignOutButton/>
-          <DeleteAccountSection user={user}/>
-        </form>
       </div>
-    </div>
-    <main>
-      <GroqChat />
-    </main>
-            </>
+
+      <main>
+        <GroqChat />
+      </main>
+    </>
   );
 }
