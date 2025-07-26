@@ -1,10 +1,10 @@
-import Image from 'next/image';
+
 import Link from 'next/link';
 
 export default function GoodbyePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6 py-12 text-center">
-      <Image
+      <img
         src="/assets/logo.jpg" // 🖼️ Replace with your actual logo path
         alt="IDM Logo"
         width={100}
