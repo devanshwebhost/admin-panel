@@ -44,9 +44,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Welcome Back</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Welcome Back IDM Member 😃</h2>
         <p className="text-sm text-gray-500 text-center mt-1 mb-6">
-          Please enter your login details to continue
+          Please enter your login info🔑 to continue.
         </p>
 
         {msg && (
@@ -62,7 +62,7 @@ export default function LoginPage() {
             placeholder="Email Address"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             required
           />
           <input
@@ -71,12 +71,12 @@ export default function LoginPage() {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border text-purple-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             required
           />
 
           <div className="flex justify-between text-sm text-gray-600">
-            <Link href="/forgot-password" className="text-blue-600 hover:underline">
+            <Link href="/forgot-password" className="text-[#902ba9] hover:underline">
               Forgot password?
             </Link>
             <Link href="/signup" className="hover:underline">
@@ -87,23 +87,11 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
+            className="w-full py-3 bg-[#902ba9] hover:bg-[#2c1d30] transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-
-        <div className="text-center mt-6">
-          <p className="text-gray-500 text-sm mb-3">Or continue with</p>
-          <button
-            type="button"
-            onClick={() => signIn('google')}
-            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-xl shadow hover:bg-gray-50 transition"
-          >
-            <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-            Continue with Google
-          </button>
-        </div>
       </div>
     </div>
   );

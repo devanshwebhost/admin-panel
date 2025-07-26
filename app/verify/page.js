@@ -54,7 +54,7 @@ export default function VerifyEmail() {
         {!success && !loading && (
           <button
             onClick={() => router.push('/login')}
-            className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl font-semibold"
+            className="mt-6 bg-purple-600 hover:bg-purple-700 text-white py-2 px-6 rounded-xl font-semibold"
           >
             Go to Login
           </button>

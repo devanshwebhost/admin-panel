@@ -68,8 +68,8 @@ export default function VerifyOTPPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10">
         <div className="flex flex-col items-center mb-6">
-          <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center text-xl text-green-600 shadow-inner">
-            🔐
+          <div className="h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center text-2xl text-purple-600 shadow-inner">
+            🔑
           </div>
           <h2 className="mt-4 text-2xl font-bold text-gray-800">Verify OTP</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -82,12 +82,12 @@ export default function VerifyOTPPage() {
           placeholder="Enter OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition mb-4"
+          className="w-full px-4 py-3 rounded-xl border text-purple-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition mb-4"
         />
 
         <button
           onClick={handleVerify}
-          className="w-full py-3 bg-green-600 hover:bg-green-700 transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
+          className="w-full py-3 bg-purple-600 hover:bg-purple-700 transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
           disabled={loading || !otp}
         >
           {loading ? 'Verifying...' : 'Verify OTP'}
@@ -95,13 +95,13 @@ export default function VerifyOTPPage() {
 
         <p className="text-center text-sm text-gray-500 mt-3">
           Didn’t get the code?{' '}
-          <button onClick={handleResend} className="text-green-600 hover:underline">
+          <button onClick={handleResend} className="text-purple-600 hover:underline">
             Resend
           </button>
         </p>
 
         {msg && (
-          <p className="mt-4 text-center text-sm text-green-600 animate-fade-in">
+          <p className="mt-4 text-center text-sm text-purple-600 animate-fade-in">
             {msg}
           </p>
         )}

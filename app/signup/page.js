@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -55,11 +56,11 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Create Account</h2>
-        <p className="text-sm text-gray-500 text-center mb-4">It's quick and easy</p>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Welcome To IDM 🎥 Create Account</h2>
+        <p className="text-sm text-gray-500 text-center mb-4">New Member 🤭 Ready to Create Future</p>
 
         {msg && (
-          <p className="text-center text-sm text-blue-600 mb-4 animate-fade-in">
+          <p className="text-center text-sm text-purple-600 mb-4 animate-fade-in">
             {msg}
           </p>
         )}
@@ -69,39 +70,39 @@ export default function SignupPage() {
             name="firstName"
             placeholder="First Name *"
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
           <input
             name="lastName"
             placeholder="Last Name"
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
           <input
             name="email"
             type="email"
             placeholder="Email Address *"
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
           <input
             name="password"
             type="password"
             placeholder="Password *"
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
           <input
             name="phone"
             placeholder="Phone (optional)"
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
           <input
             name="address"
             placeholder="Address (optional)"
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
           />
 
           <label className="flex items-center text-sm text-gray-600 mt-2">
@@ -109,15 +110,19 @@ export default function SignupPage() {
               type="checkbox"
               name="agree"
               onChange={handleChange}
-              className="mr-2 accent-blue-600"
+              className="mr-2 accent-purple-600"
             />
-            I agree to the <span className="text-blue-600 ml-1 underline">terms and conditions *</span>
+            I agree to the <span className="text-purple-600 ml-1 underline">terms and conditions *</span>
           </label>
+          
+          <Link href="/login" className="text-purple-600 hover:underline text-sm mt-2 block text-center">
+          Already have an account? Login
+          </Link>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
+            className="w-full py-3 bg-purple-600 hover:bg-purple-700 transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
           >
             {loading ? 'Creating account...' : 'Sign Up'}
           </button>

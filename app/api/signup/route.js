@@ -46,8 +46,30 @@ export async function POST(req) {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: "Verify your email",
-      html: `<p>Click below to verify your email:</p><a href="${url}">Verify Email</a>`,
+      subject: "Verify your email 🧐 ",
+      html: `
+  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px; border-radius: 10px; max-width: 500px; margin: auto;">
+    <h2 style="color: #902ba9; text-align: center;">🔐 Email Verification</h2>
+    <p style="font-size: 16px; color: #333;">
+      Hi there,
+    </p>
+    <p style="font-size: 16px; color: #333;">
+      Please click the button below to verify your email and continue with your password reset:
+    </p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${url}" style="background-color: #902ba9; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold;">
+        Verify Email ⚡
+      </a>
+    </div>
+    <p style="font-size: 14px; color: #888; text-align: center;">
+      This link will expire in 10 minutes. If you didn’t request this, you can safely ignore it.
+    </p>
+    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+    <p style="font-size: 12px; color: #aaa; text-align: center;">
+      © ${new Date().getFullYear()} Indocs Media. All rights reserved.
+    </p>
+  </div>
+`
     });
 
     return Response.json({ message: "Signup successful, verify your email" });

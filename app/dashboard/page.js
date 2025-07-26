@@ -2,6 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
+import GroqChat from "@/components/GroqChat";
+import SignOutButton from "@/components/SignOut";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -22,6 +25,7 @@ export default async function DashboardPage() {
   const user = await User.findOne({ email: session.user.email }).lean();
 
   return (
+    <>    
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Welcome, {user.firstName} 👋</h2>
@@ -44,14 +48,20 @@ export default async function DashboardPage() {
         </div>
 
         <form action="/api/auth/signout" method="post" className="mt-8">
-          <button
+          {/* <button
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-semibold transition shadow-lg"
-          >
+            >
             Logout
-          </button>
+          </button> */}
+          <SignOutButton/>
+          <DeleteAccountSection user={user}/>
         </form>
       </div>
     </div>
+    <main>
+      <GroqChat />
+    </main>
+            </>
   );
 }
