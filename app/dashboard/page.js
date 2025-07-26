@@ -50,7 +50,7 @@ export default async function DashboardPage() {
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
+        <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 mt-[150px]">
           <h2 className="text-3xl font-bold text-gray-800 mb-6">
             Welcome, {cleanUser.firstName} 👋
           </h2>

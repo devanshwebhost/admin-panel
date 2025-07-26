@@ -5,7 +5,7 @@ export default function GoodbyePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6 py-12 text-center">
       <img
-        src="/assets/logo.jpg" // 🖼️ Replace with your actual logo path
+        src="/logo.png" // 🖼️ Replace with your actual logo path
         alt="IDM Logo"
         width={100}
         height={100}

@@ -67,9 +67,9 @@ const GroqChat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4">
+    <div className="h-[85vh] bg-gray-900 text-white flex flex-col items-center p-4">
       <div className="text-2xl font-semibold text-[#902ba9] mb-4">
-        💬 Groq AI Assistant
+        I am Pascel 😊
       </div>
 
       <div

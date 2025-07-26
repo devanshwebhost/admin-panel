@@ -55,7 +55,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10">
+      <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10 mt-[150px]" >
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Welcome To IDM 🎥 Create Account</h2>
         <p className="text-sm text-gray-500 text-center mb-4">New Member 🤭 Ready to Create Future</p>
 
