@@ -1,31 +1,22 @@
-import js from '@eslint/js'
-import react from 'eslint-plugin-react'
+// eslint.config.mjs
+
+import eslintPluginReact from 'eslint-plugin-react';
+import eslintPluginReactHooks from 'eslint-plugin-react-hooks';
+import next from 'eslint-config-next';
 
 export default [
-  js.configs.recommended,
+  ...next,
   {
-    files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: {
-        console: true,
-        process: true,
-        Buffer: true,
-        global: true,
-        setTimeout: true,
-        clearTimeout: true,
-        setInterval: true,
-        clearInterval: true,
-        Response: true, // 👈 Add this if you're using Response object in server routes
-      },
-    },
     plugins: {
-      react,
+      react: eslintPluginReact,
+      'react-hooks': eslintPluginReactHooks,
     },
     rules: {
-      'react/no-unescaped-entities': 'off', // ✅ Turned off as requested
-      'no-undef': 'off', // (optional) can suppress more undefined variable errors
+      // Disable unescaped entities warning
+      'react/no-unescaped-entities': 'off',
+      // Allow JSX syntax parsing
+      'react/jsx-uses-react': 'off', // Not needed in React 17+
+      'react/react-in-jsx-scope': 'off',
     },
   },
-]
+];
