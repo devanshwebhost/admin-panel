@@ -31,7 +31,7 @@ export default function DeleteAccountSection({ user }) {
   };
 
   return (
-    <div className="bg-red-100 bg-opacity-5 border border-red-500 p-6 rounded-xl mt-10 text-left">
+    <div className="bg-red-100 bg-opacity-5 border border-red-500 p-6 rounded-xl mt-[100px] text-left w-[100%]">
       <h3 className="text-xl font-bold text-red-400">⚠️ Danger Zone</h3>
 
       <p className="text-sm text-red-500 mt-3">

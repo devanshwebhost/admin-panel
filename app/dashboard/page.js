@@ -1,3 +1,5 @@
+
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
@@ -5,8 +7,9 @@ import User from "@/models/User";
 import GroqChat from "@/components/GroqChat";
 import SignOutButton from "@/components/SignOut";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
+import DashboardPage from "@/components/DashboardClient";
 
-export default async function DashboardPage() {
+export default async function DashboardMain() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -49,39 +52,8 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 mt-[150px]">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">
-            Welcome, {cleanUser.firstName} 👋
-          </h2>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-600">Email</label>
-              <p className="text-gray-800">{cleanUser.email}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600">Phone</label>
-              <p className="text-gray-800">{cleanUser.phone}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600">Address</label>
-              <p className="text-gray-800">{cleanUser.address}</p>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <SignOutButton />
-            <DeleteAccountSection user={cleanUser} />
-          </div>
-        </div>
-      </div>
-
-      <main>
-        <GroqChat />
-      </main>
+      <DashboardPage user={cleanUser}/>
     </>
   );
 }
+
