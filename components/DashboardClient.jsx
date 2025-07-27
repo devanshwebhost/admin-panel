@@ -18,17 +18,17 @@ export default function DashboardPage({user}) {
       case 'dashboard':
         return <Dashboard user={user} />;
       case 'myTasks':
-        return <MyTasks />;
+        return <MyTasks user={user} />;
       case 'pascel':
         return <Pascal user={user} />;
       case 'settings':
         return <Settings user={user} />;
       case 'manageTeam':
-        return <ManageTeam />;
+        return <ManageTeam user={user} />;
       case 'teamProgress':
-        return <TeamProgress />;
+        return <TeamProgress user={user} />;
       case 'assignTask':
-        return <AssignTask />;
+        return <AssignTask user={user} />;
       default:
         return <Dashboard />;
     }

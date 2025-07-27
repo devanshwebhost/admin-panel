@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
@@ -7,9 +7,28 @@ const UserSchema = new mongoose.Schema({
   lastName: { type: String },
   phone: { type: String },
   address: { type: String },
+  
   emailVerified: { type: Boolean, default: false },
+  adminVerified: { type: Boolean, default: false }, // ✅ NEW FIELD
+
   otp: { type: String },
   otpExpiry: { type: Date },
+
+  isAdmin: { type: Boolean, default: false },
+  isTeamLeader: { type: Boolean, default: false },
+
+  team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: null },
+
+  attendance: [
+    {
+      date: { type: Date, default: Date.now },
+      status: { type: String, enum: ['present', 'absent'], default: 'present' },
+    }
+  ],
+
+  pendingTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+  completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+  myTodos: [{ type: String }],
 }, { timestamps: true });
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+export default mongoose.models.User || mongoose.model('User', UserSchema);
