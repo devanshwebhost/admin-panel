@@ -84,7 +84,7 @@ const GroqChat = ({user}) => {
                   ? "bg-[#902ba9] text-white rounded-br-none"
                   : msg.message === "__typing__"
                   ? "bg-gray-700 text-white italic animate-pulse"
-                  : "bg-gray-700 text-[#902ba9] rounded-bl-none"
+                  : "bg-gray-700 text-[#ffff] rounded-bl-none"
               }`}
             >
               {msg.message === "__typing__" ? "Pascel is typing..." : msg.message}
