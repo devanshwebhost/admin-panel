@@ -17,7 +17,15 @@ const UserSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, default: false },
   isTeamLeader: { type: Boolean, default: false },
 
-  team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: null },
+   team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    default: null,
+  },
+  teamName: {
+    type: String,
+    default: null,
+  },
 
   attendance: [
     {

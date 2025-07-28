@@ -15,6 +15,7 @@ async function updateUsers() {
       isAdmin: false,
       isTeamLeader: false,
       team: null,
+      teamName: null,
       pendingTasks: [],
       completedTasks: [],
       myTodos: [],

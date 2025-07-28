@@ -13,6 +13,9 @@ export default function Settings({ user }) {
   const [editingField, setEditingField] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  console.log("User:", user);
+
+
   const handleSave = async (field) => {
     setLoading(true);
     try {
@@ -97,6 +100,8 @@ export default function Settings({ user }) {
         <p><strong>Account Created:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
         <p><strong>Last Updated:</strong> {new Date(user.updatedAt).toLocaleDateString()}</p>
         <p><strong>Team Member ID:</strong> {user._id}</p>
+        <p><strong>Current Team Name:</strong> {user.teamName}</p>
+        <p><strong>Current Team ID:</strong> {user._team || "No Team Assigned"}</p>
       </div>
 
       <div className="divide-y">

@@ -264,32 +264,41 @@ const sortedTasks = filteredTasks.sort((a, b) => {
         <h2 className="text-xl font-bold mb-4 text-[#902ba9]">
           📋 Tasks You Assigned
         </h2>
-        <div className="mb-4 flex gap-3">
+<div className="mb-4 flex flex-wrap gap-2 justify-center sm:justify-start">
   <button
     onClick={() => setFilter('new')}
-    className={`px-3 py-1 rounded ${filter === 'new' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
+    className={`px-3 py-1 rounded text-sm sm:text-base ${
+      filter === 'new' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'
+    }`}
   >
     Newest
   </button>
   <button
     onClick={() => setFilter('old')}
-    className={`px-3 py-1 rounded ${filter === 'old' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
+    className={`px-3 py-1 rounded text-sm sm:text-base ${
+      filter === 'old' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'
+    }`}
   >
     Oldest
   </button>
   <button
     onClick={() => setFilter('deadlineCrossed')}
-    className={`px-3 py-1 rounded ${filter === 'deadlineCrossed' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
+    className={`px-3 py-1 rounded text-sm sm:text-base ${
+      filter === 'deadlineCrossed' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'
+    }`}
   >
     Deadline Crossed
   </button>
   <button
     onClick={() => setFilter('nearDeadline')}
-    className={`px-3 py-1 rounded ${filter === 'nearDeadline' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
+    className={`px-3 py-1 rounded text-sm sm:text-base ${
+      filter === 'nearDeadline' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'
+    }`}
   >
     Near Deadline
   </button>
 </div>
+
 
 
         {sortedTasks.length === 0 ? (

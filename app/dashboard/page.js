@@ -47,7 +47,10 @@ export default async function DashboardMain() {
     address: user.address || "Not provided",
     emailVerified: user.emailVerified,
     createdAt: user.createdAt?.toISOString(),
-    updatedAt: user.updatedAt?.toISOString()
+    updatedAt: user.updatedAt?.toISOString(),
+    _team: user.team?.toString(),
+    teamName: user.teamName || "No team assigned",
+    adminVerified: user.adminVerified,
   };
 
   return (

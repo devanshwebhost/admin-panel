@@ -152,7 +152,8 @@ const filteredTodos = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded shadow p-4">
           <h2 className="font-semibold text-lg mb-2">Team</h2>
-          <p>{user?.team || "No team assigned"}</p>
+          <p>{user?.teamName || "No team assigned"}</p>
+          <p>T-ID - {user?._team || "No team assigned"}</p>
         </div>
 
         <div className="bg-white rounded shadow p-4">
@@ -171,12 +172,17 @@ const filteredTodos = () => {
         <div className="bg-white rounded shadow p-4">
           <h2 className="font-semibold text-lg mb-2">Pending Tasks</h2>
           <ul className="list-disc ml-4">
-            {tasks
-              .filter((task) => task.status !== "complete") // Only pending
-              .map((task) => (
-                <li key={task._id}>{task.title}</li>
-              ))}
-          </ul>
+  {tasks.filter(task => task.status !== "complete").length > 0 ? (
+    tasks
+      .filter(task => task.status !== "complete")
+      .map(task => (
+        <li key={task._id}>{task.title}</li>
+      ))
+  ) : (
+    <li className="list-none text-gray-500 italic">No pending tasks!</li>
+  )}
+</ul>
+
         </div>
       </div>
 
