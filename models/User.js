@@ -28,7 +28,14 @@ const UserSchema = new mongoose.Schema({
 
   pendingTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
-  myTodos: [{ type: String }],
+  myTodos: [
+  {
+    text: String,
+    completed: { type: Boolean, default: false },
+    _id: { type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
+  }
+],
+
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

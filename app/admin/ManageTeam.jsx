@@ -1,113 +1,159 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from "react";
+import axios from "axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function Manage() {
-  const [teamName, setTeamName] = useState('Alpha Team');
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [allEmployees, setAllEmployees] = useState([]);
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [availableMembers, setAvailableMembers] = useState([]);
+export default function ManageTeam() {
+  const [teamName, setTeamName] = useState("");
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [newName, setNewName] = useState({});
+  const [memberId, setMemberId] = useState({});
 
-  useEffect(() => {
-    const fetchedEmployees = [
-      { id: 1, name: 'Aman Sharma', team: 'Alpha Team' },
-      { id: 2, name: 'Ravi Kumar', team: null },
-      { id: 3, name: 'Sneha Verma', team: 'Beta Team' },
-      { id: 4, name: 'Tina Mehra', team: null }
-    ];
+  const queryClient = useQueryClient();
 
-    setAllEmployees(fetchedEmployees);
-    setTeamMembers(fetchedEmployees.filter(emp => emp.team === teamName));
-    setAvailableMembers(fetchedEmployees.filter(emp => emp.team === null));
-  }, [teamName]);
+  // Fetch Teams
+  const {
+    data: teams = [],
+    isLoading: loadingTeams,
+    error: teamError,
+  } = useQuery({
+    queryKey: ["teams"],
+    queryFn: async () => {
+      const res = await axios.get("/api/teams");
+      return res.data.teams || [];
+    },
+  });
 
-  const handleAddMember = (id) => {
-    const member = allEmployees.find(emp => emp.id === id);
-    if (!member || member.team) return;
+  // Fetch Employees
+  const {
+    data: employees = [],
+    isLoading: loadingEmployees,
+    error: employeeError,
+  } = useQuery({
+    queryKey: ["employees"],
+    queryFn: async () => {
+      const res = await fetch("/api/users");
+      if (!res.ok) throw new Error("Failed to fetch employees");
+      const data = await res.json();
+      return data.employees || data.users || [];
+    },
+  });
 
-    member.team = teamName;
-    setTeamMembers(prev => [...prev, member]);
-    setAvailableMembers(prev => prev.filter(emp => emp.id !== id));
+  // Create Team Mutation
+  const createTeamMutation = useMutation({
+    mutationFn: async () =>
+      axios.post("/api/teams", {
+        name: teamName,
+        members: selectedMembers,
+      }),
+    onSuccess: () => {
+      setTeamName("");
+      setSelectedMembers([]);
+      queryClient.invalidateQueries(["teams"]);
+    },
+  });
+
+  // Update Team Mutation
+  const updateTeamMutation = useMutation({
+    mutationFn: ({ id, name, addMemberId }) =>
+      axios.put(`/api/manageTeam/${id}`, { name, addMemberId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["teams"]);
+    },
+  });
+
+  const toggleSelect = (id) => {
+    setSelectedMembers((prev) =>
+      prev.includes(id) ? prev.filter((mid) => mid !== id) : [...prev, id]
+    );
   };
 
-  const handleTeamNameChange = () => {
-    setIsEditingName(false);
-  };
+  if (loadingTeams || loadingEmployees) return <div>Loading...</div>;
+  if (teamError || employeeError)
+    return <div>Error loading data: {teamError?.message || employeeError?.message}</div>;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-[#902ba9] mb-6 text-center">👥 Manage Your Team</h2>
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-[#0c52a2]">Manage Teams</h1>
 
-      {/* Team Name */}
-      <div className="mb-8 bg-white border rounded-lg p-4 shadow-sm">
-        <label className="block text-gray-600 font-medium mb-2">Team Name</label>
-        {isEditingName ? (
-          <div className="flex flex-col sm:flex-row gap-3">
+      {/* Create Team Form */}
+      <div className="flex flex-col gap-2 mb-6">
+        <input
+          type="text"
+          placeholder="Enter team name"
+          className="border p-2 rounded w-full"
+          value={teamName}
+          onChange={(e) => setTeamName(e.target.value)}
+        />
+        <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-scroll border p-2 rounded">
+          {employees.map((emp) => (
+            <label key={emp._id} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={selectedMembers.includes(emp._id)}
+                onChange={() => toggleSelect(emp._id)}
+              />
+              {emp.name} ({emp.email})
+            </label>
+          ))}
+        </div>
+        <button
+          onClick={() => createTeamMutation.mutate()}
+          className="bg-[#0c52a2] text-white px-4 py-2 rounded"
+          disabled={createTeamMutation.isPending}
+        >
+          {createTeamMutation.isPending ? "Creating..." : "Create Team"}
+        </button>
+      </div>
+
+      {/* Team List */}
+      {teams.map((team) => (
+        <div key={team._id} className="border p-4 rounded mb-4 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-800">{team.name}</h2>
+
+          <div className="mt-2 flex flex-wrap gap-2">
             <input
               type="text"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              placeholder="New name"
+              className="border p-1 rounded"
+              onChange={(e) =>
+                setNewName({ ...newName, [team._id]: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              placeholder="Add member ID"
+              className="border p-1 rounded"
+              onChange={(e) =>
+                setMemberId({ ...memberId, [team._id]: e.target.value })
+              }
             />
             <button
-              onClick={handleTeamNameChange}
-              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+              onClick={() =>
+                updateTeamMutation.mutate({
+                  id: team._id,
+                  name: newName[team._id],
+                  addMemberId: memberId[team._id],
+                })
+              }
+              className="bg-green-600 text-white px-3 py-1 rounded"
+              disabled={updateTeamMutation.isPending}
             >
-              Save
+              {updateTeamMutation.isPending ? "Updating..." : "Update"}
             </button>
           </div>
-        ) : (
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold">{teamName}</span>
-            <button
-              onClick={() => setIsEditingName(true)}
-              className="text-indigo-600 hover:underline"
-            >
-              Edit
-            </button>
+
+          <div className="mt-4">
+            <p className="text-sm text-gray-500">Members:</p>
+            <ul className="list-disc list-inside text-sm">
+              {team.members?.map((m) => (
+                <li key={m._id || m}>{m.name || m.email || m}</li>
+              ))}
+            </ul>
           </div>
-        )}
-      </div>
-
-      {/* Team Members */}
-      <div className="mb-8 bg-white border rounded-lg p-4 shadow-sm">
-        <h3 className="text-lg font-medium text-gray-700 mb-3">👨‍💼 Team Members</h3>
-        {teamMembers.length === 0 ? (
-          <p className="text-sm text-gray-500">No members in your team yet.</p>
-        ) : (
-          <ul className="list-disc list-inside text-gray-800 space-y-1">
-            {teamMembers.map(member => (
-              <li key={member.id}>{member.name}</li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {/* Available Members */}
-      <div className="bg-white border rounded-lg p-4 shadow-sm">
-        <h3 className="text-lg font-medium text-gray-700 mb-3">➕ Add Members</h3>
-        {availableMembers.length === 0 ? (
-          <p className="text-sm text-gray-500">No available members to add.</p>
-        ) : (
-          <ul className="space-y-3">
-            {availableMembers.map(member => (
-              <li
-                key={member.id}
-                className="flex justify-between items-center bg-gray-50 border rounded-md px-3 py-2"
-              >
-                <span className="text-gray-800">{member.name}</span>
-                <button
-                  onClick={() => handleAddMember(member.id)}
-                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                >
-                  Add
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }

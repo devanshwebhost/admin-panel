@@ -10,7 +10,8 @@ export async function POST(req) {
     await connectDB();
     const user = await User.findOneAndUpdate(
       { email: decoded.email },
-      { emailVerified: true }
+      { emailVerified: true },
+      {adminVerified: true, }
     );
 
     if (!user) return Response.json({ error: "User not found" }, { status: 404 });

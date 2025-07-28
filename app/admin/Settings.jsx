@@ -93,6 +93,7 @@ export default function Settings({ user }) {
       <div className="text-sm text-gray-800 mb-4 space-y-1">
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Email Verified:</strong> {user.emailVerified ? "Yes" : "No"}</p>
+        <p><strong>Admin Verified:</strong> {user.adminVerified ? "Yes" : "No"}</p>
         <p><strong>Account Created:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
         <p><strong>Last Updated:</strong> {new Date(user.updatedAt).toLocaleDateString()}</p>
         <p><strong>Team Member ID:</strong> {user._id}</p>

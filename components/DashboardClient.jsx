@@ -24,7 +24,7 @@ export default function DashboardPage({user}) {
       case 'settings':
         return <Settings user={user} />;
       case 'manageTeam':
-        return <ManageTeam user={user} />;
+        return <ManageTeam teamId="64f123abc456def7890" />;
       case 'teamProgress':
         return <TeamProgress user={user} />;
       case 'assignTask':
