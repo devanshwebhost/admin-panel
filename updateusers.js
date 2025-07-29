@@ -11,15 +11,8 @@ async function updateUsers() {
 
   const result = await User.updateMany({}, {
     $set: {
-      adminVerified: false,
-      isAdmin: false,
-      isTeamLeader: false,
       team: null,
-      teamName: null,
-      pendingTasks: [],
-      completedTasks: [],
-      myTodos: [],
-      attendance: []
+      teamName: null
     }
   });
 

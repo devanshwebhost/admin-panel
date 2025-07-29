@@ -37,7 +37,7 @@ export default function DashboardPage({user}) {
   return (
     <div className="flex h-screen">
       {/* <Sidebar setActiveTab={setActiveTab} /> */}
-      <Sidebar setActiveTab={setActiveTab} />
+      <Sidebar setActiveTab={setActiveTab} isAdmin={user.isAdmin} />
       <div className="flex-1 overflow-y-auto">{renderContent()}</div>
     </div>
   );

@@ -1,3 +1,4 @@
+import nodemailer from "nodemailer";
 import { connectDB } from '@/lib/mongodb';
 import Task from '@/models/Task';
 import User from '@/models/User';
@@ -28,6 +29,33 @@ export async function POST(req) {
       $push: { pendingTasks: task._id },
     });
 
+    // 🟨 Get employee email
+    const employee = await User.findById(assignedTo);
+    const email = employee?.email;
+
+    if (email) {
+      // 📩 Send Email
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,       // Your email address
+          pass: process.env.EMAIL_SERVER_PASS,       // Your app password
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.EMAIL_SERVER_USER,
+        to: email,
+        subject: `New Task Assigned: ${title}`,
+        html: `<h3>New Task Assigned</h3>
+               <p><strong>Title:</strong> ${title}</p>
+               <p><strong>Description:</strong> ${description || 'No description'}</p>
+               <p><strong>Deadline:</strong> ${new Date(deadline).toLocaleString()}</p>`,
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+
     return NextResponse.json({ message: 'Task assigned successfully', task }, { status: 200 });
   } catch (error) {
     console.error("❌ Error assigning task:", error);
@@ -55,3 +83,4 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

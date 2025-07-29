@@ -10,7 +10,7 @@ import {
   ClipboardListIcon,
 } from "lucide-react";
 
-const Sidebar = ({ setActiveTab }) => {
+const Sidebar = ({ setActiveTab, isAdmin }) => {
   const [active, setActive] = useState("dashboard");
 
   const allTabs = [
@@ -22,6 +22,10 @@ const Sidebar = ({ setActiveTab }) => {
     { label: "Team Progress", icon: BarChart2Icon, value: "teamProgress" },
     { label: "Assign Task", icon: ClipboardListIcon, value: "assignTask" },
   ];
+
+  const filteredTabs = isAdmin
+    ? allTabs.filter(tab => tab.value !== "myTasks")
+    : allTabs;
 
   const renderButton = ({ label, icon: Icon, value }) => (
     <button
@@ -48,20 +52,20 @@ const Sidebar = ({ setActiveTab }) => {
         </div>
 
         <div className="space-y-2 px-4">
-          {allTabs.slice(0, 4).map(renderButton)} {/* Menu items */}
+          {filteredTabs.slice(0, 4).map(renderButton)}
         </div>
 
         <hr className="my-4 mx-4" />
 
         <div className="space-y-2 px-4">
-          {allTabs.slice(4).map(renderButton)} {/* Team items */}
+          {filteredTabs.slice(4).map(renderButton)}
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation with Horizontal Scroll */}
+      {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-[rgb(255_251_237)] border-t p-2 shadow-inner md:hidden overflow-x-auto">
         <div className="flex gap-4 px-2 min-w-max w-full">
-          {allTabs.map(({ icon: Icon, label, value }) => (
+          {filteredTabs.map(({ icon: Icon, label, value }) => (
             <button
               key={value}
               onClick={() => {

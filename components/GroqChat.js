@@ -27,34 +27,60 @@ const GroqChat = ({user}) => {
   };
 
   const sendMessage = async () => {
-    const message = inputValue.trim();
-    if (!message) return;
+  const message = inputValue.trim();
+  if (!message) return;
 
-    setInputValue("");
-    saveMessage("user", message);
-    saveMessage("bot", "__typing__");
+  setInputValue("");
+  saveMessage("user", message);
+  saveMessage("bot", "__typing__");
 
-    try {
-      const response = await fetch("https://pascel.onrender.com/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userMessage: message }),
-      });
+  try {
+    const response = await fetch("https://pascel.onrender.com/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userMessage: message }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
+    const fullReply = data.reply;
 
+    // Remove "__typing__" message
+    setChatHistory((prev) => {
+      const updated = [...prev.slice(0, -1)];
+      localStorage.setItem("chatHistory", JSON.stringify(updated));
+      return updated;
+    });
+
+    // Typing effect simulation
+    let index = 0;
+    const typingInterval = 30; // ms between letters
+
+    const typeChar = () => {
       setChatHistory((prev) => {
+        const currentText = prev[prev.length - 1]?.sender === "bot"
+          ? prev[prev.length - 1].message
+          : "";
+
         const updated = [
-          ...prev.slice(0, -1),
-          { sender: "bot", message: data.reply },
+          ...prev.slice(0, prev.length - (currentText ? 1 : 0)),
+          { sender: "bot", message: (currentText || "") + fullReply[index] },
         ];
         localStorage.setItem("chatHistory", JSON.stringify(updated));
         return updated;
       });
-    } catch (error) {
-      console.error("Fetch error:", error);
-    }
-  };
+
+      index++;
+      if (index < fullReply.length) {
+        setTimeout(typeChar, typingInterval);
+      }
+    };
+
+    typeChar();
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+};
+
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {

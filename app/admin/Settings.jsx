@@ -113,7 +113,7 @@ export default function Settings({ user }) {
         {renderField("Address", "address", address, setAddress)}
       </div>
       <SignOutButton/>
-      <DeleteAccountSection user={user}/>
+      {!user.isAdmin && <DeleteAccountSection user={user} />}
     </div>
     </>
   );

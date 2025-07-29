@@ -51,6 +51,7 @@ export default async function DashboardMain() {
     _team: user.team?.toString(),
     teamName: user.teamName || "No team assigned",
     adminVerified: user.adminVerified,
+    isAdmin: user.isAdmin,
   };
 
   return (

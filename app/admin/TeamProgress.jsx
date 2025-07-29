@@ -4,19 +4,24 @@ import MobileNavbar from '@/components/MobileNavbar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
+
+
 
 export default function TeamProgress() {
   const queryClient = useQueryClient();
 
   // Fetch teams
   const { data, isLoading, error } = useQuery({
-    queryKey: ['teams'],
-    queryFn: async () => {
-      const res = await axios.get('/api/teams');
-      return res.data.teams;
-    },
-    refetchInterval: 3000, // Live updates every 3 seconds
-  });
+  queryKey: ['teams'],
+  queryFn: async () => {
+    const res = await axios.get('/api/teams');
+    return res.data.teams;
+  },
+  refetchInterval: 3000, // ⏱️ Refetch every 3 seconds
+  refetchIntervalInBackground: true, // ✅ Optional: refetch even if tab is not active
+});
+
 
   // Delete mutation
   const deleteTeamMutation = useMutation({
@@ -49,12 +54,18 @@ export default function TeamProgress() {
               const progress = totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0;
               const isDelayed = progress < 50;
               const createdDate = team.createdAt ? format(new Date(team.createdAt), 'dd MMM yyyy') : 'N/A';
+              const updatedDate = team.updatedAt ? format(new Date(team.updatedAt), 'dd MMM yyyy') : 'N/A';
+              const timeAgo = formatDistanceToNow(new Date(team.updatedAt), { addSuffix: true });
+              const CtimeAgo = formatDistanceToNow(new Date(team.createdAt), { addSuffix: true });
 
               return (
                 <div key={team._id} className="p-4 border rounded-lg shadow-sm bg-gray-50 relative">
                   <h2 className="text-lg font-semibold text-indigo-600">{team.name}</h2>
                   <p className="text-sm text-gray-600 mt-1">
-                    Created on: {createdDate}
+                    Created on: {createdDate} / {CtimeAgo}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Updated on: {updatedDate} / {timeAgo}
                   </p>
                   <p className="text-sm text-gray-600">Members: {team.members?.length || 0}</p>
                   <p className="text-sm text-gray-600 mt-1">

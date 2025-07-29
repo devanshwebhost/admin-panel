@@ -318,35 +318,48 @@ const handleDeleteTeam = (teamId) => {
       {/* Team List */}
       {teams.map((team) => (
   <div key={team._id} className="border p-4 rounded mb-4 shadow-sm">
-    <h2 className="text-xl font-semibold text-gray-800">{team.name}</h2>
+<h2 className="text-xl font-semibold text-gray-800">
+  {team.name} - Created by: No Info Available
+</h2>
 
-    <div className="mt-2 flex flex-wrap gap-2">
-      <input
-        type="text"
-        placeholder="Add member ID"
-        className="border p-1 rounded"
-        onChange={(e) =>
-          setMemberId({ ...memberId, [team._id]: e.target.value })
-        }
-      />
-      <button
-  onClick={() =>
-    updateTeamMutation.mutate({
-      id: team._id,
-      name: newName[team._id],
-      addMemberId: memberId[team._id],
-    })
-  }
-  className="bg-green-600 text-white px-3 py-1 rounded"
-  disabled={updatingTeamId === team._id}
->
-  {updatingTeamId === team._id ? "Updating..." : "Update"}
-</button>
 
-    </div>
+
+<form className="mt-2 flex flex-wrap gap-2">
+  <input
+    type="text"
+    placeholder="Add member ID"
+    className="border p-1 rounded"
+    required
+    value={memberId[team._id] || ""} // controlled input
+    onChange={(e) =>
+      setMemberId({ ...memberId, [team._id]: e.target.value })
+    }
+  />
+  <button
+    type="submit"
+    onClick={(e) => {
+      e.preventDefault(); // prevent form reload
+      updateTeamMutation.mutate({
+        id: team._id,
+        name: newName[team._id],
+        addMemberId: memberId[team._id],
+      });
+    }}
+    className={`text-white px-3 py-1 rounded transition-all duration-200 ${
+      updatingTeamId === team._id || !memberId[team._id]?.trim()
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-green-600 hover:bg-green-700"
+    }`}
+    disabled={updatingTeamId === team._id || !memberId[team._id]?.trim()}
+  >
+    {updatingTeamId === team._id ? "Updating..." : "Update"}
+  </button>
+</form>
+
+
 
     <div className="mt-4">
-      <p className="text-sm text-gray-500 mb-2 font-medium">Team Members:</p>
+      <p className="text-sm text-gray-500 mb-2 font-medium">Team Members: {team.members.length}</p>
       <p className="text-sm text-gray-500 mb-2 font-medium">
         Total Team Tasks: {teamReport?.[team._id]?.teamTotal || 0}
       </p>

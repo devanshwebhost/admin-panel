@@ -30,6 +30,8 @@ const TeamSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+}, {
+  timestamps: true  // 👉 This adds createdAt and updatedAt
 });
 
 export default mongoose.models.Team || mongoose.model('Team', TeamSchema);
