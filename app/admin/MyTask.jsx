@@ -9,6 +9,7 @@ import {
   CalendarIcon,
   InfoIcon,
 } from 'lucide-react';
+import MobileNavbar from '@/components/MobileNavbar';
 
 export default function MyTasks({ user }) {
   const [tasks, setTasks] = useState([]);
@@ -49,16 +50,20 @@ export default function MyTasks({ user }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 mt-8 bg-white rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold text-[#902ba9] mb-6 flex items-center gap-2">
-        <InfoIcon className="w-5 h-5" />
-        My Assigned Tasks
-      </h2>
-
+    <>
+    <MobileNavbar title='My Tasks'/>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md md:mb-0 mb-10 mt-10">
+      
       {loading ? (
-        <p className="text-gray-500">Loading tasks...</p>
+        <div className="max-w-4xl mx-auto p-4">
+          {/* <p className="text-gray-500">Loading tasks...</p> */}
+    <img src="../pascelloading.gif" alt="Loading" />
+  </div>
       ) : tasks.length === 0 ? (
-        <p className="text-gray-500 text-center">No tasks assigned yet.</p>
+        <p className="text-gray-500 text-center">No tasks assigned yet.
+        <div className="max-w-4xl mx-auto p-4">
+    <img src="../pascelloading.gif" alt="Loading" />
+  </div></p>
       ) : (
         <div className="space-y-4">
           {tasks.map((task) => (
@@ -113,5 +118,6 @@ export default function MyTasks({ user }) {
         </div>
       )}
     </div>
+    </>
   );
 }

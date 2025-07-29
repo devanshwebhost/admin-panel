@@ -63,14 +63,16 @@ const GroqChat = ({user}) => {
     }
   };
 
+
   return (
-    <div className="bg-gray-900 text-white flex flex-col items-center  min-h-screen pt-10">
-      <div className="md:text-3xl text-[15px] font-bold text-[#902ba9] mb-6 ">Hello {user.firstName} I'm Pascel 😊</div>
+    <div className=" bg-gray-800 text-white flex flex-col items-center  min-h-screen pt-5 bg-ai">
+      {/* <img src="../ai-bg.gif" className="w-full mt-[-20px] max-h-screen fixed z-[-10]"/> */}
+      {/* <div className="flex items-center justify-center gap-2 mb-5" > <img src="../logo.png" width={50} className="rounded-4xl"/> <h1 className="md:text-3xl text-[15px] font-bold text-[#902ba9]">- Pascel</h1></div> */}
 
       <div
         ref={chatBoxRef}
-        className="w-full max-w-2xl h-[450px] overflow-y-auto hide-scrollbar bg-gray-800 p-4 rounded-xl shadow-inner flex flex-col space-y-3"
-      >
+        className="w-full max-w-2xl md:h-[85vh] h-[80vh] md:mt-0 mt-[-20px] overflow-y-auto hide-scrollbar bg-gray-800 p-4 md:rounded-xl shadow-inner flex flex-col space-y-3"
+       >
         {chatHistory.map((msg, index) => (
           <div
             key={index}
@@ -93,18 +95,18 @@ const GroqChat = ({user}) => {
         ))}
       </div>
 
-      <div className="flex gap-2 mt-4 w-full max-w-2xl">
+      <div className="flex md:gap-2  md:mt-4 w-full max-w-2xl mt-0">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
-          className="flex-grow px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#902ba9]"
+          className="flex-grow m-2 px-4  py-3 md:rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 "
         />
         <button
           onClick={sendMessage}
-          className="px-5 py-3 bg-[#902ba9] text-white rounded-lg hover:bg-[#7a238e] transition-all"
+          className="px-5 py-3 m-2 bg-[#902ba9] text-white md:rounded-lg hover:bg-[#7a238e] transition-all"
         >
           ➤
         </button>

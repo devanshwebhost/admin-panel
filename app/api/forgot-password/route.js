@@ -5,7 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server"; // ✅ Use NextResponse (App Router only)
-import { Link } from "lucide-react";
+// import { Link } from "lucide-react";
 
 export async function POST(req) {
   try {

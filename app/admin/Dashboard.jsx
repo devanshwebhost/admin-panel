@@ -1,5 +1,6 @@
 "use client";
 
+import MobileNavbar from "@/components/MobileNavbar";
 import { useEffect, useState } from "react";
 
 export default function Dashboard({ user }) {
@@ -129,9 +130,11 @@ const filteredTodos = () => {
 
 
   return (
-    <div className="p-4 space-y-6 md:mt-0 mt-10">
-      <h1 className="md:text-2xl font-bold mb-4 text-[18px] md:text-left text-center text-[#902ba9]">
-        {user.firstName} 🤓 Welcome To Your Dashboard
+    <>
+    <MobileNavbar title="Dashboard" />
+    <div className="p-4 space-y-6  md:mb-0 mb-10 mt-10">
+      <h1 className="md:text-2xl font-bold mb-4 text-[25px] md:text-left  text-[#902ba9]">
+        Hello👋 {user.firstName}
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -174,10 +177,10 @@ const filteredTodos = () => {
           <ul className="list-disc ml-4">
   {tasks.filter(task => task.status !== "complete").length > 0 ? (
     tasks
-      .filter(task => task.status !== "complete")
-      .map(task => (
-        <li key={task._id}>{task.title}</li>
-      ))
+    .filter(task => task.status !== "complete")
+    .map(task => (
+      <li key={task._id}>{task.title}</li>
+    ))
   ) : (
     <li className="list-none text-gray-500 italic">No pending tasks!</li>
   )}
@@ -194,7 +197,7 @@ const filteredTodos = () => {
       const latestTask = [...tasks].sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       )[0];
-
+      
       return (
         <li>
           New task assigned:{" "}
@@ -219,25 +222,25 @@ const filteredTodos = () => {
   <button
     onClick={() => setFilter('all')}
     className={`px-3 py-1 rounded ${filter === 'all' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-  >
+    >
     All
   </button>
   <button
     onClick={() => setFilter('new')}
     className={`px-3 py-1 rounded ${filter === 'new' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-  >
+    >
     New
   </button>
   <button
     onClick={() => setFilter('old')}
     className={`px-3 py-1 rounded ${filter === 'old' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-  >
+    >
     Old
   </button>
   <button
     onClick={() => setFilter('complete')}
     className={`px-3 py-1 rounded ${filter === 'complete' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-  >
+    >
     Complete
   </button>
 </div>
@@ -249,18 +252,18 @@ const filteredTodos = () => {
             placeholder="Add a todo..."
             value={newTodo}
             onChange={(e) => setNewTodo(e.target.value)}
-          />
+            />
           {editIndex !== null ? (
             <button
-              onClick={updateTodo}
-              className="bg-yellow-500 text-white px-4 py-1 rounded"
+            onClick={updateTodo}
+            className="bg-yellow-500 text-white px-4 py-1 rounded"
             >
               Update
             </button>
           ) : (
             <button
-              onClick={addTodo}
-              className="bg-[#902ba9] text-white px-4 py-1 rounded"
+            onClick={addTodo}
+            className="bg-[#902ba9] text-white px-4 py-1 rounded"
             >
               Add
             </button>
@@ -274,11 +277,11 @@ const filteredTodos = () => {
       // Extract creation time from MongoDB ObjectId (_id)
       const timestamp = parseInt(todo._id.toString().substring(0, 8), 16) * 1000;
       const createdDate = new Date(timestamp).toLocaleDateString();
-
+      
       return (
         <li
-          key={todo._id}
-          className="flex justify-between md:flex-row flex-col items-center border-b py-2"
+        key={todo._id}
+        className="flex justify-between md:flex-row flex-col items-center border-b py-2"
         >
           <div className={`flex-grow ${todo.completed ? "line-through text-gray-500" : ""}`}>
             {todo.text}
@@ -288,19 +291,19 @@ const filteredTodos = () => {
             <button
               onClick={() => toggleComplete(index)}
               className="text-green-600 text-sm"
-            >
+              >
               {todo.completed ? "Undo" : "Complete"}
             </button>
             <button
               onClick={() => editTodo(index)}
               className="text-blue-600 text-sm"
-            >
+              >
               Edit
             </button>
             <button
               onClick={() => deleteTodo(index)}
               className="text-red-600 text-sm"
-            >
+              >
               Delete
             </button>
           </div>
@@ -312,5 +315,6 @@ const filteredTodos = () => {
 
       </div>
     </div>
+  </>
   );
 }

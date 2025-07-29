@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import MobileNavbar from "@/components/MobileNavbar";
 
 export default function ManageTeam({ user }) {
   const [teamName, setTeamName] = useState("");
@@ -258,7 +259,9 @@ const handleDeleteTeam = (teamId) => {
 
   
 
-  if (loadingTeams || employeesLoading) return <div>Loading...</div>;
+  if (loadingTeams || employeesLoading) return <div className="max-w-4xl mx-auto p-4">
+    <img src="../pascelloading.gif" alt="Loading" />
+  </div>;
   if (teamError || employeesError)
     return (
       <div>
@@ -267,10 +270,9 @@ const handleDeleteTeam = (teamId) => {
     );
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="md:text-3xl text-[20px] mt-10 md:mt-0 text-center md:text-left font-bold mb-6 text-[#0c52a2]">
-        {user.firstName} Manage Your Teams
-      </h1>
+    <>
+    <MobileNavbar title="Manage Team"/>
+    <div className="max-w-4xl mx-auto p-4 md:mb-0 mb-10 mt-11">
 
       {user?.teamName && user?._team ? (
   <p className="max-w-md mx-auto bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-md shadow-sm text-center text-sm sm:text-base">
@@ -389,5 +391,6 @@ const handleDeleteTeam = (teamId) => {
 
       
     </div>
+    </>
   );
 }

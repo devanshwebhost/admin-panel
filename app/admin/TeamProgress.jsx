@@ -1,5 +1,6 @@
 'use client';
 
+import MobileNavbar from '@/components/MobileNavbar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -24,13 +25,15 @@ export default function TeamProgress() {
     },
   });
 
-  if (isLoading) return <p>Loading teams...</p>;
+  if (isLoading) return <div className="max-w-4xl mx-auto p-4">
+    <img src="../pascelloading.gif" alt="Loading" />
+  </div>;
   if (error) return <p>Error fetching teams</p>;
 
   return (
-    <div className="bg-white min-h-screen p-6 rounded-xl shadow-md">
-      <h1 className="text-2xl font-bold text-[#902ba9] text-center mb-6">📈 Team Progress</h1>
-
+    <>
+    <MobileNavbar title='Team Progress'/>
+    <div className="bg-white min-h-screen p-6 rounded-xl shadow-md mt-10">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {data && data.length > 0 ? (
   data.map((team) => {
@@ -76,5 +79,6 @@ export default function TeamProgress() {
 
       </div>
     </div>
+    </>
   );
 }

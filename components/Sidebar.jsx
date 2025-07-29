@@ -8,84 +8,76 @@ import {
   UsersIcon,
   BarChart2Icon,
   ClipboardListIcon,
-  MenuIcon,
-  XIcon,
 } from "lucide-react";
 
 const Sidebar = ({ setActiveTab }) => {
   const [active, setActive] = useState("dashboard");
-  const [isOpen, setIsOpen] = useState(false);
 
-  const menuItems = [
-    { label: "Dashboard", icon: <HomeIcon className="w-5 h-5 mr-2" />, value: "dashboard" },
-    { label: "My Tasks", icon: <ListCheckIcon className="w-5 h-5 mr-2" />, value: "myTasks" },
-    { label: "Pascel AI", icon: <BotIcon className="w-5 h-5 mr-2" />, value: "pascel" },
-    { label: "Settings", icon: <SettingsIcon className="w-5 h-5 mr-2" />, value: "settings" },
+  const allTabs = [
+    { label: "Dashboard", icon: HomeIcon, value: "dashboard" },
+    { label: "My Tasks", icon: ListCheckIcon, value: "myTasks" },
+    { label: "Pascel AI", icon: BotIcon, value: "pascel" },
+    { label: "Settings", icon: SettingsIcon, value: "settings" },
+    { label: "Manage Team", icon: UsersIcon, value: "manageTeam" },
+    { label: "Team Progress", icon: BarChart2Icon, value: "teamProgress" },
+    { label: "Assign Task", icon: ClipboardListIcon, value: "assignTask" },
   ];
 
-  const teamItems = [
-    { label: "Manage Team", icon: <UsersIcon className="w-5 h-5 mr-2" />, value: "manageTeam" },
-    { label: "Team Progress", icon: <BarChart2Icon className="w-5 h-5 mr-2" />, value: "teamProgress" },
-    { label: "Assign Task", icon: <ClipboardListIcon className="w-5 h-5 mr-2" />, value: "assignTask" },
-  ];
-
-  const renderButton = ({ label, icon, value }) => (
+  const renderButton = ({ label, icon: Icon, value }) => (
     <button
       key={value}
       onClick={() => {
         setActiveTab(value);
         setActive(value);
-        setIsOpen(false); // Close sidebar on mobile
       }}
       className={`flex items-center w-full px-4 py-2 rounded-lg transition-colors text-left font-medium ${
         active === value ? "bg-purple-100 text-purple-700" : "text-gray-600 hover:bg-gray-200"
       }`}
     >
-      {icon}
+      <Icon className="w-5 h-5 mr-2" />
       {label}
     </button>
   );
 
   return (
     <>
-      {/* Hamburger Button (Mobile Only) */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="text-gray-700 bg-white shadow-md p-2 rounded-md"
-        >
-          <MenuIcon />
-        </button>
-      </div>
-
-      {/* Sidebar Overlay */}
-      <div
-        className={`fixed top-0 left-0 h-full w-64 bg-[rgb(255_251_237)] shadow-lg z-40 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 md:static md:shadow-none md:flex md:flex-col`}
-      >
-        {/* Close Button (Mobile Only) */}
-        <div className="md:hidden flex justify-end p-4">
-          <button onClick={() => setIsOpen(false)}>
-            <XIcon />
-          </button>
-        </div>
-
-        {/* Logo */}
-        <div className="flex justify-center mb-4">
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex md:flex-col md:w-64 bg-[rgb(255_251_237)] h-full shadow-lg relative">
+        <div className="flex justify-center my-6">
           <img src="/logo.png" alt="logo" width={120} />
         </div>
 
-        {/* Main Menu */}
         <div className="space-y-2 px-4">
-          {menuItems.map(renderButton)}
+          {allTabs.slice(0, 4).map(renderButton)} {/* Menu items */}
         </div>
 
         <hr className="my-4 mx-4" />
 
-        {/* Team Menu */}
         <div className="space-y-2 px-4">
-          {teamItems.map(renderButton)}
+          {allTabs.slice(4).map(renderButton)} {/* Team items */}
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation with Horizontal Scroll */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[rgb(255_251_237)] border-t p-2 shadow-inner md:hidden overflow-x-auto">
+        <div className="flex gap-4 px-2 min-w-max w-full">
+          {allTabs.map(({ icon: Icon, label, value }) => (
+            <button
+              key={value}
+              onClick={() => {
+                setActiveTab(value);
+                setActive(value);
+              }}
+              className={`flex flex-col items-center text-xs min-w-[64px] ${
+                active === value ? "text-purple-700" : "text-gray-500"
+              }`}
+            >
+              <Icon className="w-5 h-5 mb-1" />
+              <span className="whitespace-nowrap">
+                {label.length > 10 ? label.slice(0, 8) + "…" : label}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
     </>

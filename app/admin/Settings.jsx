@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 import SignOutButton from "@/components/SignOut";
+import MobileNavbar from "@/components/MobileNavbar";
 
 export default function Settings({ user }) {
   const [firstName, setFirstName] = useState(user.firstName || "");
@@ -90,8 +91,9 @@ export default function Settings({ user }) {
   );
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md border md:mt-6 mt-[60px]">
-      <h2 className="text-xl font-bold  mb-4 text-[#902ba9]">User Settings</h2>
+    <>
+    <MobileNavbar title="Settings"/>
+    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md border md:mt-6 md:mb-0 mb-10 mt-10">
 
       <div className="text-sm text-gray-800 mb-4 space-y-1">
         <p><strong>Email:</strong> {user.email}</p>
@@ -113,5 +115,6 @@ export default function Settings({ user }) {
       <SignOutButton/>
       <DeleteAccountSection user={user}/>
     </div>
+    </>
   );
 }

@@ -17,7 +17,7 @@ export default function Navbar() {
 
 
       <div className=' items-center gap-4 text-white hidden md:flex'>
-      <h1 className="md:text-2xl hidden md:block">PASCEL | IDM Team Panel</h1>
+      <h1 className="md:text-2xl hidden md:block" >PASCEL | IDM Team Panel</h1>
       <div className='flex  gap-4 text-white'>
         <Link href="/" className='text-purple-500'>Home</Link>
         <Link href="/dashboard" className='text-purple-500'>Already Logged In? Go to Dashboard</Link>

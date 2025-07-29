@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import MobileNavbar from "@/components/MobileNavbar";
 
 export default function Assign({ user }) {
   // const [employees, setEmployees] = useState([]);
@@ -177,10 +178,9 @@ const sortedTasks = filteredTasks.sort((a, b) => {
   });
 
   return (
-    <div className="bg-white min-h-screen p-6 rounded-xl shadow-md">
-      <h1 className="text-2xl font-bold text-[#902ba9] mb-6 text-center">
-        📝 Assign Task
-      </h1>
+    <>
+    <MobileNavbar title="Assign Tasks"/>
+    <div className="bg-white min-h-screen p-6 rounded-xl shadow-md mt-10">
 
       <p className="text-gray-600 text-sm mb-2">
         Total Employees: <strong>{employees.length}</strong>
@@ -260,7 +260,7 @@ const sortedTasks = filteredTasks.sort((a, b) => {
 
       {/* section of see the assigned tasks  */}
 
-      <div className="bg-white shadow rounded-lg p-6 mt-8">
+      <div className="bg-white shadow rounded-lg p-6 mt-8 md:mb-0 mb-10">
         <h2 className="text-xl font-bold mb-4 text-[#902ba9]">
           📋 Tasks You Assigned
         </h2>
@@ -372,12 +372,12 @@ const sortedTasks = filteredTasks.sort((a, b) => {
                       onChange={(e) => setEditDescription(e.target.value)}
                       className="w-full border px-2 py-1 rounded"
                     />
-                    <input
+                    {/* <input
                       type="date"
                       value={editDeadline}
                       onChange={(e) => setEditDeadline(e.target.value)}
                       className="w-full border px-2 py-1 rounded"
-                    />
+                    /> */}
                     <div className="flex gap-2">
                       <button
                         type="submit"
@@ -402,5 +402,6 @@ const sortedTasks = filteredTasks.sort((a, b) => {
         )}
       </div>
     </div>
+    </>
   );
 }
