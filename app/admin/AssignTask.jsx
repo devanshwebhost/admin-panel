@@ -17,6 +17,10 @@ export default function Assign({ user }) {
   const [editDescription, setEditDescription] = useState("");
   const [editDeadline, setEditDeadline] = useState("");
   const queryClient = useQueryClient();
+  const isCompleted = (task) => task.status === 'completed';
+
+
+
   // Employees load karo
   const {
     data: employees = [],
@@ -30,6 +34,8 @@ export default function Assign({ user }) {
       return res.json(); // assuming it returns an array of users
     },
   });
+
+
   
   const {
     data: tasks = [],
@@ -51,7 +57,6 @@ export default function Assign({ user }) {
 
 const filteredTasks = tasks.filter(task => {
   if (!task.dueDate) return true; // safety check
-
   const dueDate = new Date(task.dueDate);
 
   if (filter === 'deadlineCrossed') {
@@ -60,11 +65,16 @@ const filteredTasks = tasks.filter(task => {
 
   if (filter === 'nearDeadline') {
     const diffInDays = (dueDate - now) / (1000 * 60 * 60 * 24);
-    return diffInDays >= 0 && diffInDays <= 3; // due within next 3 days
+    return diffInDays >= 0 && diffInDays <= 3;
   }
 
-  return true; // for 'new' and 'old', no filter on date
+  if (filter === 'complete') {
+    return task.status === 'completed';
+  }
+
+  return true; // for 'new', 'old', or default
 });
+
 
 // Sort filtered tasks:
 const sortedTasks = filteredTasks.sort((a, b) => {
@@ -77,7 +87,10 @@ const sortedTasks = filteredTasks.sort((a, b) => {
   if (filter === 'deadlineCrossed' || filter === 'nearDeadline') {
     return new Date(a.dueDate) - new Date(b.dueDate); // earliest deadline first
   }
-  return 0;
+  if (filter === 'complete') {
+  return new Date(b.updatedAt) - new Date(a.updatedAt); // most recently completed first
+}
+return 0;
 });
 
 
@@ -297,6 +310,14 @@ const sortedTasks = filteredTasks.sort((a, b) => {
   >
     Near Deadline
   </button>
+  <button
+    onClick={() => setFilter('complete')}
+    className={`px-3 py-1 rounded text-sm sm:text-base ${
+      filter === 'complete' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'
+    }`}
+  >
+    Completed Tasks
+  </button>
 </div>
 
 
@@ -307,97 +328,116 @@ const sortedTasks = filteredTasks.sort((a, b) => {
           </p>
         ) : (
           <ul className="space-y-4">
-            {sortedTasks.map((task) => (
-              <li key={task._id} className="border p-4 rounded-md shadow-sm">
-                <h3 className="font-semibold text-lg text-[#902ba9]">
-                  {task.title}
-                </h3>
-                <p className="text-gray-700 text-sm">{task.description}</p>
-                <p className="text-gray-600 text-sm">
-                  Assigned to:{" "}
-                  <strong>
-                    {task.assignedTo?.[0]?.firstName}{" "}
-                    {task.assignedTo?.[0]?.lastName}
-                  </strong>
-                </p>
-                <p className="text-gray-500 text-xs">
-                  Deadline: {new Date(task.dueDate).toLocaleDateString()}
-                </p>
-                <button
-                  onClick={() => {
-                    setEditTaskId(task._id);
-                    setEditTitle(task.title);
-                    setEditDescription(task.description);
-                    setEditDeadline(task.dueDate.slice(0, 10)); // format yyyy-mm-dd
-                  }}
-                  className="text-sm text-[#902ba9] hover:underline mr-3"
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm("Are you sure you want to delete this task?")) {
-                      deleteTaskMutation.mutate(task._id);
-                    }
-                  }}
-                  disabled={deleteTaskMutation.isLoading}
-                  className="text-sm text-red-600 hover:underline disabled:opacity-50"
-                >
-                  🗑️ Delete
-                </button>
+            {sortedTasks.map((task) => {
+  const completed = isCompleted(task);
+  return (
+    <li
+      key={task._id}
+      className={`border p-4 rounded-md shadow-sm ${
+        completed ? 'bg-green-50 border-green-300' : ''
+      }`}
+    >
+      <h3 className="font-semibold text-lg text-[#902ba9]">{task.title}</h3>
+      <p className="text-sm italic text-gray-600">Status: {task.status}</p>
+      <p className="text-gray-700 text-sm">{task.description}</p>
+      <p className="text-gray-600 text-sm">
+        Assigned to:{' '}
+        <strong>
+          {task.assignedTo?.[0]?.firstName} {task.assignedTo?.[0]?.lastName}
+        </strong>
+      </p>
+      <p className="text-gray-600 text-sm">
+        Assigned By:{' '}
+        <strong>
+          {task.assignedBy?.firstName} {task.assignedBy?.lastName}
+        </strong>
+      </p>
+      <p className="text-gray-500 text-xs">
+        Deadline: {new Date(task.dueDate).toLocaleDateString()}
+      </p>
 
-                {editTaskId === task._id && (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      updateTaskMutation.mutate({
-                        id: task._id,
-                        updates: {
-                          title: editTitle,
-                          description: editDescription,
-                          deadline: editDeadline,
-                        },
-                      });
-                    }}
-                    className="mt-4 space-y-2"
-                  >
-                    <input
-                      type="text"
-                      value={editTitle}
-                      onChange={(e) => setEditTitle(e.target.value)}
-                      className="w-full border px-2 py-1 rounded"
-                    />
-                    <textarea
-                      value={editDescription}
-                      onChange={(e) => setEditDescription(e.target.value)}
-                      className="w-full border px-2 py-1 rounded"
-                    />
-                    {/* <input
-                      type="date"
-                      value={editDeadline}
-                      onChange={(e) => setEditDeadline(e.target.value)}
-                      className="w-full border px-2 py-1 rounded"
-                    /> */}
-                    <div className="flex gap-2">
-                      <button
-                        type="submit"
-                        disabled={updateTaskMutation.isLoading}
-                        className="bg-green-600 text-white px-3 py-1 rounded disabled:opacity-50"
-                      >
-                        {updateTaskMutation.isLoading ? "Saving..." : "💾 Save"}
-                      </button>
+      {/* ✅ Only show these for non-completed tasks */}
+      {!completed && (
+        <>
+          <button
+            onClick={() => {
+              setEditTaskId(task._id);
+              setEditTitle(task.title);
+              setEditDescription(task.description);
+              setEditDeadline(task.dueDate.slice(0, 10)); // format yyyy-mm-dd
+            }}
+            className="text-sm text-[#902ba9] hover:underline mr-3"
+          >
+            ✏️ Edit
+          </button>
+          <button
+            onClick={() => {
+              if (confirm("Are you sure you want to delete this task?")) {
+                deleteTaskMutation.mutate(task._id);
+              }
+            }}
+            disabled={deleteTaskMutation.isLoading}
+            className="text-sm text-red-600 hover:underline disabled:opacity-50"
+          >
+            🗑️ Delete
+          </button>
+          {/* <button
+            onClick={() => markAsComplete(task._id)}
+            className="text-sm text-green-600 hover:underline ml-3"
+          >
+            ✅ Mark as Completed
+          </button> */}
+        </>
+      )}
 
-                      <button
-                        onClick={() => setEditTaskId(null)}
-                        className="text-gray-600"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </li>
-            ))}
+      {/* ✅ Edit form (only show if not completed) */}
+      {editTaskId === task._id && !completed && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            updateTaskMutation.mutate({
+              id: task._id,
+              updates: {
+                title: editTitle,
+                description: editDescription,
+                deadline: editDeadline,
+              },
+            });
+          }}
+          className="mt-4 space-y-2"
+        >
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            className="w-full border px-2 py-1 rounded"
+          />
+          <textarea
+            value={editDescription}
+            onChange={(e) => setEditDescription(e.target.value)}
+            className="w-full border px-2 py-1 rounded"
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={updateTaskMutation.isLoading}
+              className="bg-green-600 text-white px-3 py-1 rounded disabled:opacity-50"
+            >
+              {updateTaskMutation.isLoading ? "Saving..." : "💾 Save"}
+            </button>
+            <button
+              onClick={() => setEditTaskId(null)}
+              className="text-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+    </li>
+  );
+})}
+
           </ul>
         )}
       </div>

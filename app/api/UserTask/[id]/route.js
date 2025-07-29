@@ -1,4 +1,4 @@
-// PUT /api/tasks/:id
+// PUT /api/UserTask/[id]
 import { connectDB } from '@/lib/mongodb';
 import Task from '@/models/Task';
 import { NextResponse } from 'next/server';
@@ -7,9 +7,13 @@ export async function PUT(req, { params }) {
   try {
     await connectDB();
     const { id } = params;
-    const { status } = await req.json();
+    const body = await req.json();
 
-    // Validate status
+    console.log("🧾 PUT request body:", body);
+    console.log("🆔 Task ID:", id);
+
+    const { status } = body;
+
     const validStatuses = ["pending", "in-progress", "completed"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
@@ -31,3 +35,4 @@ export async function PUT(req, { params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

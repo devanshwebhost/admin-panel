@@ -36,16 +36,20 @@ export default function MyTasks({ user }) {
     fetchTasks();
   }, [user]);
 
+
+  
+
   const markAsComplete = async (taskId) => {
+    // console.log(`hey id - ${taskId}`)
     try {
-      const res = await fetch(`/api/UserTask/${taskId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: 'complete',
-          completedAt: new Date().toISOString(),
-        }),
-      });
+      await fetch(`/api/UserTask/${taskId}`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ status: 'completed' }),
+});
+
 
       if (res.ok) {
         const updated = await res.json();
@@ -60,8 +64,9 @@ export default function MyTasks({ user }) {
 
   const isOverdue = (deadline) => new Date(deadline) < new Date();
 
-  const activeTasks = tasks.filter((t) => t.status !== 'complete');
-  const completedTasks = tasks.filter((t) => t.status === 'complete');
+  const activeTasks = tasks.filter((t) => t.status !== 'completed');
+const completedTasks = tasks.filter((t) => t.status === 'completed');
+
 
   return (
     <>
@@ -107,7 +112,7 @@ export default function MyTasks({ user }) {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
-                    <p>ID - {task._id}</p>
+                    <p>ID - {task._id} Status - {task.status}</p>
                     <div className="flex items-center gap-2">
                       {isOverdue(task.dueDate) ? (
                         <span className="text-red-600 flex items-center text-sm">
@@ -139,11 +144,17 @@ export default function MyTasks({ user }) {
                   </div>
 
                   <button
-                    onClick={() => markAsComplete(task._id)}
-                    className="mt-3 px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
-                  >
-                    ✔ Mark as Complete
-                  </button>
+  onClick={() => {
+    const confirmed = window.confirm("Are you sure you want to mark this task as complete? This action cannot be undone.");
+    if (confirmed) {
+      markAsComplete(task._id);
+    }
+  }}
+  className="mt-3 px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+>
+  ✔ Mark as Complete
+</button>
+
                 </div>
               ))}
             </div>
