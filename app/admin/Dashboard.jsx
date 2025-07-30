@@ -2,6 +2,8 @@
 
 import MobileNavbar from "@/components/MobileNavbar";
 import { useEffect, useState } from "react";
+import { useQuery } from '@tanstack/react-query';
+import PunchInBanner from "@/components/PunchInCard";
 
 export default function Dashboard({ user }) {
   const [todos, setTodos] = useState([]);
@@ -9,7 +11,16 @@ export default function Dashboard({ user }) {
   const [editIndex, setEditIndex] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all' | 'new' | 'old' | 'complete'
+  // const queryClient = useQueryClient();
+  // const [projects, setProjects] = useState([]);
 
+useEffect(() => {
+  const getProjects = async () => {
+    const data = await fetchProjects();
+    setProjects(data);
+  };
+  getProjects();
+}, []);
 
   useEffect(() => {
   const fetchTodos = async () => {
@@ -111,22 +122,44 @@ const deleteTodo = async (index) => {
 };
 
 const filteredTodos = () => {
-  let filtered = [...todos];
+  let todosWithDate = todos.map(todo => {
+    const timestamp = parseInt(todo._id.toString().substring(0, 8), 16) * 1000;
+    return {
+      ...todo,
+      createdAt: new Date(timestamp),
+    };
+  });
 
-  if (filter === 'complete') {
-    filtered = filtered.filter(todo => todo.completed);
+  switch (filter) {
+    case 'new':
+      return [...todosWithDate].sort((a, b) => b.createdAt - a.createdAt);
+    case 'old':
+      return [...todosWithDate].sort((a, b) => a.createdAt - b.createdAt);
+    case 'complete':
+      return todosWithDate.filter(todo => todo.completed);
+    case 'incomplete':
+      return todosWithDate.filter(todo => !todo.completed);
+    case 'all':
+    default:
+      return todosWithDate;
   }
-
-  if (filter === 'new') {
-    filtered = filtered.sort((a, b) => new Date(b._id) - new Date(a._id)); // Assuming ObjectId timestamps
-  }
-
-  if (filter === 'old') {
-    filtered = filtered.sort((a, b) => new Date(a._id) - new Date(b._id));
-  }
-
-  return filtered;
 };
+
+const fetchProjects = async () => {
+  const res = await fetch('/api/projects');
+  if (!res.ok) throw new Error('Failed to fetch projects');
+  return res.json();
+};
+
+const { data: projects = [], isLoading, error } = useQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+});
+
+const runningCount = projects?.filter(p => p.type === 'running').length || 0;
+const completedCount = projects?.filter(p => p.type === 'completed').length || 0;
+const upcomingCount = projects?.filter(p => p.type === 'upcoming').length || 0;
+
 
 
   return (
@@ -137,20 +170,35 @@ const filteredTodos = () => {
         Hello👋 {user.firstName}
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Running Projects</h2>
-          <p>3 ongoing projects</p>
-        </div>
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Completed Projects</h2>
-          <p>12 completed</p>
-        </div>
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Upcoming Projects</h2>
-          <p>2 upcoming</p>
-        </div>
-      </div>
+    <PunchInBanner user={user}/>
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {/* Running Projects */}
+  <div className="bg-purple-50 border-l-4 border-purple-500 rounded shadow p-4 transition hover:scale-[1.01]">
+    <h2 className="font-semibold text-lg mb-2 text-purple-700">Running Projects</h2>
+    <p className="text-gray-700">
+      {runningCount ?? 0} ongoing project{(runningCount ?? 0) !== 1 ? 's' : ''}
+    </p>
+  </div>
+
+  {/* Completed Projects */}
+  <div className="bg-green-50 border-l-4 border-green-500 rounded shadow p-4 transition hover:scale-[1.01]">
+    <h2 className="font-semibold text-lg mb-2 text-green-700">Completed Projects</h2>
+    <p className="text-gray-700">
+      {completedCount ?? 0} completed
+    </p>
+  </div>
+
+  {/* Upcoming Projects */}
+  <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded shadow p-4 transition hover:scale-[1.01]">
+    <h2 className="font-semibold text-lg mb-2 text-yellow-700">Upcoming Projects</h2>
+    <p className="text-gray-700">
+      {upcomingCount ?? 0} upcoming
+    </p>
+  </div>
+</div>
+
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded shadow p-4">
@@ -200,11 +248,13 @@ const filteredTodos = () => {
       
       return (
         <li>
-          New task assigned:{" "}
+          Latest one <br/>
+          Task assigned:{" "}
           <span className="font-medium">{latestTask.title}</span> <br />
           <span className="text-gray-600">
             By: {latestTask.assignedBy?.firstName || 'Unknown'} |{" "}
-            On: {new Date(latestTask.createdAt).toLocaleDateString()}
+            On: {new Date(latestTask.createdAt).toLocaleDateString()} <br/>
+            Status: {latestTask.status}
           </span>
         </li>
       );
@@ -243,6 +293,13 @@ const filteredTodos = () => {
     >
     Complete
   </button>
+  <button
+  onClick={() => setFilter('incomplete')}
+  className={`px-3 py-1 rounded ${filter === 'incomplete' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
+>
+  Incomplete
+</button>
+
 </div>
 
         <div className="flex gap-2 mb-4">

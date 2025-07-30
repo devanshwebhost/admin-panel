@@ -71,19 +71,19 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
   return (
     <>
       <MobileNavbar title="My Tasks" />
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md mt-10 mb-20">
+      <div className="max-w-4xl mx-auto p-6 text-sm bg-white rounded-xl shadow-md mt-10 mb-20">
         {/* Tabs */}
         <div className="flex gap-4 mb-4">
           <button
-            className={`px-4 py-2 rounded ${
+            className={`px-2 py-2 rounded  ${
               tab === 'active' ? 'bg-indigo-600 text-white' : 'bg-gray-100'
             }`}
             onClick={() => setTab('active')}
           >
             📝 Active Tasks
           </button>
-          <button
-            className={`px-4 py-2 rounded ${
+                    <button
+            className={`px-2 py-2 rounded ${
               tab === 'completed' ? 'bg-indigo-600 text-white' : 'bg-gray-100'
             }`}
             onClick={() => setTab('completed')}
@@ -111,8 +111,8 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
                   }`}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
-                    <p>ID - {task._id} Status - {task.status}</p>
+                    <h3 className="md:text-lg text-[12px] font-semibold text-gray-800">{task.title}<br/> <p className='md:text-sm text-[10px] font-mono '>ID - {task._id}</p></h3>
+                    <br/>
                     <div className="flex items-center gap-2">
                       {isOverdue(task.dueDate) ? (
                         <span className="text-red-600 flex items-center text-sm">
@@ -129,15 +129,15 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
                   </div>
 
                   {task.description && (
-                    <p className="text-sm text-gray-700 mb-2">{task.description}</p>
+                    <p className="md:text-sm text-[10px] text-gray-700 mb-2">{task.description}</p>
                   )}
 
                   <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 md:text-sm text-[12px] ">
                       <UserIcon className="w-4 h-4" />
                       Assigned by: {task.assignedBy?.firstName || 'N/A'}
                     </span>
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 md:text-sm text-[12px] ">
                       <CalendarIcon className="w-4 h-4" />
                       Due: {new Date(task.dueDate).toLocaleDateString()}
                     </span>
@@ -150,7 +150,7 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
       markAsComplete(task._id);
     }
   }}
-  className="mt-3 px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+  className="mt-3 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-[10px] md:text-sm"
 >
   ✔ Mark as Complete
 </button>
@@ -170,7 +170,7 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
                   className="p-4 rounded-lg shadow border bg-green-50 border-green-300"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
+                    <h3 className="md:text-lg text-[12px] font-semibold text-gray-800">{task.title}</h3>
                     <span className="text-green-600 flex items-center text-sm">
                       <CheckCircle2Icon className="w-4 h-4 mr-1" />
                       Completed
@@ -178,10 +178,10 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
                   </div>
 
                   {task.description && (
-                    <p className="text-sm text-gray-700 mb-2">{task.description}</p>
+                    <p className="md:text-sm text-[10px] text-gray-700 mb-2">{task.description}</p>
                   )}
 
-                  <div className="flex items-center justify-between text-sm text-gray-600">
+                  <div className="flex items-center justify-between md:text-sm text-[12px] text-gray-600">
                     <span className="flex items-center gap-1">
                       <UserIcon className="w-4 h-4" />
                       Assigned by: {task.assignedBy?.firstName || 'N/A'}

@@ -1,57 +1,22 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const projectSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    description: {
-      type: String,
-      default: "",
-    },
-
-    status: {
-      type: String,
-      enum: ["upcoming", "running", "completed"],
-      default: "upcoming",
-    },
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Assuming you have a User model
-      required: true,
-    },
-
-    assignedTeam: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Team", // Assuming you have a Team model
-    },
-
-    tasks: [
-      {
-        title: String,
-        isCompleted: { type: Boolean, default: false },
-        assignedTo: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        completedBy: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        completedAt: Date,
-      },
-    ],
-
-    startDate: Date,
-    endDate: Date,
+const projectSchema = new mongoose.Schema({
+  title: String,
+  startDate: String,
+  description: String,
+  amount: Number,
+  timeline: String,
+  clientName: String,
+  clientOrigin: String,
+  type: {
+    type: String,
+    enum: ['running', 'upcoming', 'completed']
   },
-  {
-    timestamps: true,
-  }
-);
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+}, { timestamps: true });
 
-export default mongoose.models.Project || mongoose.model("Project", projectSchema);
+export default mongoose.models.Project || mongoose.model('Project', projectSchema);
