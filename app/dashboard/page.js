@@ -8,6 +8,7 @@ import GroqChat from "@/components/GroqChat";
 import SignOutButton from "@/components/SignOut";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 import DashboardPage from "@/components/DashboardClient";
+import Attendance from "@/models/Attendance";
 
 export default async function DashboardMain() {
   const session = await getServerSession(authOptions);
@@ -52,6 +53,7 @@ export default async function DashboardMain() {
     teamName: user.teamName || "No team assigned",
     adminVerified: user.adminVerified,
     isAdmin: user.isAdmin,
+    attendance: user.attendance || [],
   };
 
   return (

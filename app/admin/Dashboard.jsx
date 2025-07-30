@@ -159,7 +159,11 @@ const { data: projects = [], isLoading, error } = useQuery({
 const runningCount = projects?.filter(p => p.type === 'running').length || 0;
 const completedCount = projects?.filter(p => p.type === 'completed').length || 0;
 const upcomingCount = projects?.filter(p => p.type === 'upcoming').length || 0;
-
+// Count present and absent days
+const presentDays = user?.attendance?.filter((a) => a.status === 'present').length || 0;
+const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length || 0;
+ // kya yeh array hai?
+// console.log(user?.attendance)
 
 
   return (
@@ -204,16 +208,16 @@ const upcomingCount = projects?.filter(p => p.type === 'upcoming').length || 0;
         <div className="bg-white rounded shadow p-4">
           <h2 className="font-semibold text-lg mb-2">Team</h2>
           <p>{user?.teamName || "No team assigned"}</p>
-          <p>T-ID - {user?._team || "No team assigned"}</p>
+          <p className="font-mono ">T-ID - {user?._team || "No team assigned"}</p>
         </div>
 
         <div className="bg-white rounded shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">My Attendance</h2>
-          <p>
-            Present: {user?.attendance?.present || "{No Info yet}"} days |
-            Absent: {user?.attendance?.absent || "{No Info yet}"} days
-          </p>
-        </div>
+  <h2 className="font-semibold text-lg mb-2">My Attendance</h2>
+  <p>
+    Present: {presentDays} day{presentDays !== 1 ? 's' : ''} | 
+    Absent: {absentDays} day{absentDays !== 1 ? 's' : ''}
+  </p>
+</div>
 
         <div className="bg-white rounded shadow p-4">
           <h2 className="font-semibold text-lg mb-2">My Holidays</h2>
