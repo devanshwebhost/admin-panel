@@ -223,9 +223,9 @@ const upcomingCount = projects?.filter(p => p.type === 'upcoming').length || 0;
         <div className="bg-white rounded shadow p-4">
           <h2 className="font-semibold text-lg mb-2">Pending Tasks</h2>
           <ul className="list-disc ml-4">
-  {tasks.filter(task => task.status !== "complete").length > 0 ? (
+  {tasks.filter(task => task.status !== "completed").length > 0 ? (
     tasks
-    .filter(task => task.status !== "complete")
+    .filter(task => task.status !== "completed")
     .map(task => (
       <li key={task._id}>{task.title}</li>
     ))
