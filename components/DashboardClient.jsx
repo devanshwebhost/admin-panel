@@ -9,6 +9,7 @@ import ManageTeam from '@/app/admin/ManageTeam';
 import TeamProgress from '@/app/admin/TeamProgress';
 import AssignTask from '@/app/admin/AssignTask';
 import Sidebar from '@/components/Sidebar';
+import AdminControlPanel from '@/app/admin/ControlAdmin';
 
 export default function DashboardPage({user}) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -29,6 +30,8 @@ export default function DashboardPage({user}) {
         return <TeamProgress />;
       case 'assignTask':
         return <AssignTask user={user} />;
+      case 'adminControl':
+        return <AdminControlPanel user={user}/> ;
       default:
         return <Dashboard />;
     }

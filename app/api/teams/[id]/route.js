@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
-import Team from "@/models/Team"; // your Mongoose team model
+import Team from "@/models/Team";
+import User from "@/models/User";
 import { Types } from "mongoose";
 
 export async function DELETE(request, { params }) {
@@ -14,15 +15,24 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    const deletedTeam = await Team.findByIdAndDelete(id);
-
-    if (!deletedTeam) {
+    // Step 1: Find the team first
+    const team = await Team.findById(id);
+    if (!team) {
       return new Response(JSON.stringify({ message: "Team not found" }), {
         status: 404,
       });
     }
 
-    return new Response(JSON.stringify({ message: "Team deleted successfully" }), {
+    // Step 2: Remove the team reference from all users who are part of the team
+    await User.updateMany(
+      { team: team._id },
+      { $unset: { team: "", teamName: "" } } // or use $set: { team: null, teamName: null }
+    );
+
+    // Step 3: Delete the team
+    await Team.findByIdAndDelete(id);
+
+    return new Response(JSON.stringify({ message: "Team and user references deleted successfully" }), {
       status: 200,
     });
   } catch (error) {

@@ -21,6 +21,7 @@ const Sidebar = ({ setActiveTab, isAdmin }) => {
     { label: "Manage Team", icon: UsersIcon, value: "manageTeam" },
     { label: "Team Progress", icon: BarChart2Icon, value: "teamProgress" },
     { label: "Assign Task", icon: ClipboardListIcon, value: "assignTask" },
+    { label: "Admin Control", icon: ClipboardListIcon, value: "adminControl" },
   ];
 
   const filteredTabs = isAdmin

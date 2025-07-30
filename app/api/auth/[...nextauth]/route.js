@@ -18,7 +18,7 @@ export const authOptions = {
         const user = await User.findOne({ email: credentials.email });
         if (!user) throw new Error("User not found");
         if (!user.emailVerified) throw new Error("Email not verified");
-
+        if (!user.adminVerified) throw new Error("Email not verified By Admin Ask Admin to verify Email");
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) throw new Error("Invalid credentials");
 

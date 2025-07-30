@@ -5,7 +5,7 @@ export async function GET() {
   try {
     await connectDB();
 
-    const users = await User.find({}, '_id firstName lastName email');
+    const users = await User.find({}, '_id firstName lastName email isAdmin emailVerified adminVerified');
 
     return Response.json(users, { status: 200 });
   } catch (error) {

@@ -231,7 +231,7 @@ useEffect(() => {
     );
   };
 
-  const deleteTeamMutation = useMutation({
+const deleteTeamMutation = useMutation({
   mutationFn: async (teamId) => {
     const res = await fetch(`/api/teams/${teamId}`, {
       method: "DELETE",
@@ -240,15 +240,15 @@ useEffect(() => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Failed to delete team.");
 
-    return teamId; // return deleted team ID
+    return teamId;
   },
   onSuccess: (deletedTeamId) => {
     alert("Team deleted successfully!");
-    queryClient.invalidateQueries(["teams"]); // or update local state if not using useQuery
+    queryClient.invalidateQueries(["teams"]);
     setTeams((prev) => prev.filter((team) => team._id !== deletedTeamId));
   },
   onError: (error) => {
-    console(error.message || "Something went wrong!");
+    console.error(error.message || "Something went wrong!");
   },
 });
 
@@ -291,18 +291,20 @@ const handleDeleteTeam = (teamId) => {
           onChange={(e) => setTeamName(e.target.value)}
         />
         <div className="flex md:grid flex-col md:flex-row grid-cols-2 gap-2 max-h-40 overflow-y-scroll border p-2 rounded">
-          {employees.map((emp) => (
-            <label key={emp._id} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={selectedMembers.includes(emp._id)}
-                onChange={() => toggleSelect(emp._id)}
-              />
-              {emp.firstName} ({emp.email}) <br /> ID - ({emp._id})
+  {employees
+    .filter(emp => !emp.isAdmin && emp.role !== "admin") // hide admins
+    .map((emp) => (
+      <label key={emp._id} className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={selectedMembers.includes(emp._id)}
+          onChange={() => toggleSelect(emp._id)}
+        />
+        {emp.firstName} ({emp.email}) <br /> ID - ({emp._id})
+      </label>
+    ))}
+</div>
 
-            </label>
-          ))}
-        </div>
         <button
           onClick={() => createTeamMutation.mutate()}
           className="bg-[#0c52a2] text-white px-4 py-2 rounded"
@@ -319,42 +321,46 @@ const handleDeleteTeam = (teamId) => {
       {teams.map((team) => (
   <div key={team._id} className="border p-4 rounded mb-4 shadow-sm">
 <h2 className="text-xl font-semibold text-gray-800">
-  {team.name} - Created by: No Info Available
+  {team.name} - Created by: {team.createdBy?.email || team.createdBy?.firstName || team.createdBy}
+  {/* {} */}
 </h2>
 
 
 
-<form className="mt-2 flex flex-wrap gap-2">
-  <input
-    type="text"
-    placeholder="Add member ID"
-    className="border p-1 rounded"
-    required
-    value={memberId[team._id] || ""} // controlled input
-    onChange={(e) =>
-      setMemberId({ ...memberId, [team._id]: e.target.value })
-    }
-  />
-  <button
-    type="submit"
-    onClick={(e) => {
-      e.preventDefault(); // prevent form reload
-      updateTeamMutation.mutate({
-        id: team._id,
-        name: newName[team._id],
-        addMemberId: memberId[team._id],
-      });
-    }}
-    className={`text-white px-3 py-1 rounded transition-all duration-200 ${
-      updatingTeamId === team._id || !memberId[team._id]?.trim()
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-green-600 hover:bg-green-700"
-    }`}
-    disabled={updatingTeamId === team._id || !memberId[team._id]?.trim()}
-  >
-    {updatingTeamId === team._id ? "Updating..." : "Update"}
-  </button>
-</form>
+{(!team || team?.createdBy?.email === user.email) && (
+  <form className="mt-2 flex flex-wrap gap-2">
+    <input
+      type="text"
+      placeholder="Add member ID"
+      className="border p-1 rounded"
+      required
+      value={memberId[team._id] || ""}
+      onChange={(e) =>
+        setMemberId({ ...memberId, [team._id]: e.target.value })
+      }
+    />
+    <button
+      type="submit"
+      onClick={(e) => {
+        e.preventDefault();
+        updateTeamMutation.mutate({
+          id: team._id,
+          name: newName[team._id],
+          addMemberId: memberId[team._id],
+        });
+      }}
+      className={`text-white px-3 py-1 rounded transition-all duration-200 ${
+        updatingTeamId === team._id || !memberId[team._id]?.trim()
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-green-600 hover:bg-green-700"
+      }`}
+      disabled={updatingTeamId === team._id || !memberId[team._id]?.trim()}
+    >
+      {updatingTeamId === team._id ? "Updating..." : "Update"}
+    </button>
+  </form>
+)}
+
 
 
 
@@ -377,6 +383,7 @@ const handleDeleteTeam = (teamId) => {
               <br />
               Total Tasks: {teamReport?.[team._id]?.report?.[m._id || m]?.total || 0}
             </span>
+          {(!team || team?.createdBy?.email === user.email) && (
             <button
               onClick={() =>
                 removeMemberMutation.mutate({
@@ -388,17 +395,19 @@ const handleDeleteTeam = (teamId) => {
             >
               ❌ Remove
             </button>
+          )}
           </li>
         ))}
       </ul>
     </div>
-
+{(!team || team?.createdBy?.email === user.email || user.isAdmin) && (
     <button
       onClick={() => handleDeleteTeam(team._id)}
       className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
     >
       Delete Team
     </button>
+)}
   </div>
 ))}
 

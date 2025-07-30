@@ -20,18 +20,27 @@ export default function Assign({ user }) {
   const isCompleted = (task) => task.status === "completed";
 
   // Employees load karo
-  const {
-    data: employees = [],
-    isLoading: employeesLoading,
-    error: employeesError,
-  } = useQuery({
-    queryKey: ["employees"],
-    queryFn: async () => {
-      const res = await fetch("/api/users");
-      if (!res.ok) throw new Error("Failed to fetch employees");
-      return res.json(); // assuming it returns an array of users
-    },
-  });
+const {
+  data: employees = [],
+  isLoading: employeesLoading,
+  error: employeesError,
+} = useQuery({
+  queryKey: ["employees"],
+  queryFn: async () => {
+    const res = await fetch("/api/users");
+    if (!res.ok) throw new Error("Failed to fetch employees");
+
+    const users = await res.json();
+    console.log("Fetched Users:", users); // Debug here
+
+    // Filter out admins (use correct condition)
+    const nonAdminUsers = users.filter(user => user.isAdmin !== true && user.isAdmin !== "true");
+
+    return nonAdminUsers;
+  },
+});
+
+
 
   const {
     data: tasks = [],
@@ -201,10 +210,12 @@ export default function Assign({ user }) {
               required
             >
               <option value="">-- Select an Employee --</option>
-              {employees.map((emp) => (
-                <option key={emp._id} value={emp._id}>
-                  {emp.firstName} {emp.lastName}
-                </option>
+{employees
+  .filter(emp => emp.isAdmin !== true && emp.isAdmin !== "true") // or emp.role !== 'admin'
+  .map(emp => (
+    <option key={emp._id} value={emp._id}>
+      {emp.firstName} {emp.lastName}
+    </option>
               ))}
             </select>
           </div>
@@ -358,8 +369,12 @@ export default function Assign({ user }) {
                     </p>
 
                     {/* ✅ Only show these for non-completed tasks */}
+                      
+                      
                     {!completed && (
                       <>
+                      {(task.assignedBy?._id === user._id || user.isAdmin) && (
+                        <>
                         <button
                           onClick={() => {
                             setEditTaskId(task._id);
@@ -385,15 +400,12 @@ export default function Assign({ user }) {
                           className="text-sm text-red-600 hover:underline disabled:opacity-50"
                         >
                           🗑️ Delete
-                        </button>
-                        {/* <button
-            onClick={() => markAsComplete(task._id)}
-            className="text-sm text-green-600 hover:underline ml-3"
-          >
-            ✅ Mark as Completed
-          </button> */}
+                        </button></>
+                        )}
                       </>
                     )}
+                    
+                  
 
                     {/* ✅ Edit form (only show if not completed) */}
                     {editTaskId === task._id && !completed && (
