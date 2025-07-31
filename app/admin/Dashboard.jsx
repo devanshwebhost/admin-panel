@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 import PunchInBanner from "@/components/PunchInCard";
 import NotificationBell from "@/components/Notification";
+import PcNavbar from "@/components/PcNavbar";
 
 export default function Dashboard({ user }) {
   const [todos, setTodos] = useState([]);
@@ -172,7 +173,8 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
   return (
     <>
     <MobileNavbar title="Dashboard" />
-    <div className="p-4 space-y-6  md:mb-0 mb-10 mt-10">
+    <PcNavbar title="Dashboard" />
+    <div className="p-4 space-y-6  md:mb-0 mb-10 mt-[50px]">
       <h1 className="md:text-2xl font-bold mb-4 text-[25px] md:text-left  text-[#902ba9]">
         Hello👋 {user.firstName}
       </h1>
@@ -265,29 +267,34 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
 
 
         <div className="flex gap-2 mb-4">
-          <input
-            type="text"
-            className="flex-grow border rounded px-3 py-1"
-            placeholder="Add a todo..."
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            />
-          {editIndex !== null ? (
-            <button
-            onClick={updateTodo}
-            className="bg-yellow-500 text-white px-4 py-1 rounded"
-            >
-              Update
-            </button>
-          ) : (
-            <button
-            onClick={addTodo}
-            className="bg-[#902ba9] text-white px-4 py-1 rounded"
-            >
-              Add
-            </button>
-          )}
-        </div>
+  <input
+    type="text"
+    className="flex-grow border rounded px-3 py-1"
+    placeholder="Add a todo..."
+    value={newTodo}
+    onChange={(e) => setNewTodo(e.target.value)}
+  />
+  {editIndex !== null ? (
+    <button
+      onClick={updateTodo}
+      className="bg-yellow-500 text-white px-4 py-1 rounded"
+    >
+      Update
+    </button>
+  ) : (
+    <button
+      onClick={addTodo}
+      disabled={!newTodo.trim()}
+      className={`px-4 py-1 rounded text-white transition
+        ${!newTodo.trim() 
+          ? "bg-purple-300 cursor-not-allowed" 
+          : "bg-[#902ba9] hover:bg-[#7c1d91]"}`}
+    >
+      Add
+    </button>
+  )}
+</div>
+
         <ul className="space-y-2">
   {filteredTodos().length === 0 ? (
     <li className="text-gray-500 italic">No todos match your criteria.</li>

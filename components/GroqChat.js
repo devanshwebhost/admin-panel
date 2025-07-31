@@ -1,87 +1,90 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+'use client';
 
-const GroqChat = ({user}) => {
-  const [chatHistory, setChatHistory] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const chatBoxRef = useRef(null);
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
+export default function GroqChat({ user }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const messagesEndRef = useRef(null);
+
+  // State to hold the AI message being typed out
+  const [displayedAIMessage, setDisplayedAIMessage] = useState("");
+
+  // Load memory for this user
   useEffect(() => {
-    const history = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    setChatHistory(history);
-  }, []);
-
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }, [chatHistory]);
-
-  const saveMessage = (sender, message) => {
-    setChatHistory((prev) => {
-      const updated = [...prev, { sender, message }];
-      localStorage.setItem("chatHistory", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const sendMessage = async () => {
-  const message = inputValue.trim();
-  if (!message) return;
-
-  setInputValue("");
-  saveMessage("user", message);
-  saveMessage("bot", "__typing__");
-
-  try {
-    const response = await fetch("https://pascel.onrender.com/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userMessage: message }),
-    });
-
-    const data = await response.json();
-    const fullReply = data.reply;
-
-    // Remove "__typing__" message
-    setChatHistory((prev) => {
-      const updated = [...prev.slice(0, -1)];
-      localStorage.setItem("chatHistory", JSON.stringify(updated));
-      return updated;
-    });
-
-    // Typing effect simulation
-    let index = 0;
-    const typingInterval = 30; // ms between letters
-
-    const typeChar = () => {
-      setChatHistory((prev) => {
-        const currentText = prev[prev.length - 1]?.sender === "bot"
-          ? prev[prev.length - 1].message
-          : "";
-
-        const updated = [
-          ...prev.slice(0, prev.length - (currentText ? 1 : 0)),
-          { sender: "bot", message: (currentText || "") + fullReply[index] },
-        ];
-        localStorage.setItem("chatHistory", JSON.stringify(updated));
-        return updated;
-      });
-
-      index++;
-      if (index < fullReply.length) {
-        setTimeout(typeChar, typingInterval);
+    const loadMemory = async () => {
+      try {
+        const res = await axios.get(`/api/memory?userId=${user._id}`);
+        setMessages(res.data || []);
+      } catch (err) {
+        console.error("Failed to load memory:", err);
       }
     };
+    loadMemory();
+  }, [user._id]);
 
-    typeChar();
-  } catch (error) {
-    console.error("Fetch error:", error);
-  }
-};
+  // Scroll to bottom when messages or displayedAIMessage changes
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, displayedAIMessage]);
 
+  const sendMessage = async () => {
+    if (!input.trim()) return;
 
+    const userMsg = { role: "user", content: input };
+    setMessages(prev => [...prev, userMsg]);
+    setTyping(true);
+    setInput("");
+    setDisplayedAIMessage(""); // Clear previous typing message
+
+    try {
+      const res = await axios.post("/api/chat", {
+        userMessage: input,
+        userId: user._id,
+        userInfo: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          address: user.address,
+          phone: user.mobileNumber
+        }
+      });
+
+      const fullReply = res.data.reply + " 😊";
+
+      // Typing effect: show AI reply one character at a time
+      let i = 0;
+      setDisplayedAIMessage("");
+      const intervalId = setInterval(() => {
+        i++;
+        setDisplayedAIMessage(fullReply.slice(0, i));
+        if (i === fullReply.length) {
+          clearInterval(intervalId);
+          setTyping(false);
+          setMessages(prev => [...prev, { role: "assistant", content: fullReply }]);
+          setDisplayedAIMessage("");
+        }
+      }, 30); // Adjust typing speed here (ms per char)
+
+    } catch (err) {
+      console.error("Chat error:", err);
+      setTyping(false);
+    }
+  };
+
+  const clearMemory = async () => {
+    try {
+      await axios.delete(`/api/memory?userId=${user._id}`);
+      setMessages([]);
+      setDisplayedAIMessage("");
+    } catch (err) {
+      console.error("Failed to clear memory:", err);
+    }
+  };
+
+  // Handle Enter to send, Shift+Enter for newline
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -89,56 +92,97 @@ const GroqChat = ({user}) => {
     }
   };
 
-
   return (
-    <div className=" bg-gray-800 text-white flex flex-col items-center  min-h-screen pt-5 bg-ai">
-      {/* <img src="../ai-bg.gif" className="w-full mt-[-20px] max-h-screen fixed z-[-10]"/> */}
-      {/* <div className="flex items-center justify-center gap-2 mb-5" > <img src="../logo.png" width={50} className="rounded-4xl"/> <h1 className="md:text-3xl text-[15px] font-bold text-[#902ba9]">- Pascel</h1></div> */}
+    <div className={`${darkMode ? "dark" : ""} hide-scrollbar`}>
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center px-4 py-6 transition-colors">
 
-      <div
-        ref={chatBoxRef}
-        className="w-full max-w-2xl md:h-[85vh] h-[80vh] md:mt-0 mt-[-20px] overflow-y-auto hide-scrollbar bg-gray-800 p-4 md:rounded-xl shadow-inner flex flex-col space-y-3"
-       >
-        {chatHistory.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
+        {/* Header */}
+        <div className="hidden md:flex justify-between w-full max-w-2xl mb-4">
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Pascel AI 🤓</h1>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="px-3 py-1 rounded-md bg-gray-300 dark:bg-gray-700 text-sm text-gray-800 dark:text-white"
+            aria-label="Toggle dark mode"
           >
-            <div
-              className={`px-4 py-2 rounded-lg max-w-[80%] text-sm ${
-                msg.sender === "user"
-                  ? "bg-[#902ba9] text-white rounded-br-none"
-                  : msg.message === "__typing__"
-                  ? "bg-gray-700 text-white italic animate-pulse"
-                  : "bg-gray-700 text-[#ffff] rounded-bl-none"
-              }`}
-            >
-              {msg.message === "__typing__" ? "Pascel is typing..." : msg.message}
-            </div>
-          </div>
-        ))}
-      </div>
+            {darkMode ? "Light ☀️" : "Dark 🌙"}
+          </button>
+        </div>
 
-      <div className="flex md:gap-2  md:mt-4 w-full max-w-2xl mt-0">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-          className="flex-grow m-2 px-4  py-3 md:rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 "
-        />
-        <button
-          onClick={sendMessage}
-          className="px-5 py-3 m-2 bg-[#902ba9] text-white md:rounded-lg hover:bg-[#7a238e] transition-all"
-        >
-          ➤
-        </button>
+        {/* Chat messages area */}
+        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-4 h-[70vh] overflow-y-auto">
+          {messages.length === 0 && !displayedAIMessage ? (
+            <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-10">
+              Hello <span className="font-semibold">{user.firstName}!</span> 👋<br />
+              Ask me anything to get started.
+            </div>
+          ) : (
+            <>
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`p-3 rounded-lg max-w-[70%] text-sm ${
+                    msg.role === "user"
+                      ? "bg-purple-500 text-white"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  }`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+
+              {/* Show AI typing effect message */}
+              {typing && displayedAIMessage && (
+                <div className="flex justify-start">
+                  <div className="p-3 rounded-lg max-w-[70%] text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono">
+                    {displayedAIMessage}
+                    <span className="animate-pulse">|</span>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          <div ref={messagesEndRef}></div>
+        </div>
+
+        {/* Input + buttons */}
+        <div className="flex gap-2 w-full max-w-2xl mt-4">
+          <textarea
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    onKeyDown={handleKeyDown}
+    placeholder="Say something..."
+    rows={1}
+    className="flex-grow px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white resize-none"
+    aria-label="Chat input"
+  />
+  
+  <button
+    onClick={sendMessage}
+    disabled={!input.trim()} // disables button if input is empty or only whitespace
+    className={`px-4 py-2 rounded-md text-white font-medium transition 
+      ${!input.trim() 
+        ? "bg-purple-300 cursor-not-allowed" 
+        : "bg-purple-600 hover:bg-purple-700"}`}
+    aria-label="Send message"
+  >
+    Send
+  </button>
+          {/* <button
+    onClick={clearMemory}
+    disabled={!input.trim()} // disables button if input is empty or only whitespace
+    className={`px-4 py-2 rounded-md text-white font-medium transition 
+      ${!input.trim() 
+        ? "bg-purple-300 cursor-not-allowed" 
+        : "bg-purple-600 hover:bg-purple-700"}`}
+    aria-label="Clear chat memory"
+  >
+    Clear chat memory
+  </button> */}
+        </div>
+
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 select-none">
+          Press <kbd>Enter</kbd> to send, <kbd>Shift + Enter</kbd> for newline.
+        </p>
       </div>
     </div>
   );
-};
-
-export default GroqChat;
+}

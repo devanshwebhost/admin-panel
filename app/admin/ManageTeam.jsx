@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import MobileNavbar from "@/components/MobileNavbar";
+import PcNavbar from "@/components/PcNavbar";
+import { toast } from "react-toastify";
 
 export default function ManageTeam({ user }) {
   const [teamName, setTeamName] = useState("");
@@ -169,9 +171,9 @@ useEffect(() => {
   onError: (error) => {
     if (error.response?.status === 409) {
       const message = error.response.data.message;
-      alert(message);
+      toast.error(message);
     } else {
-      alert("Failed to create team. Please try again.");
+      toast.error("Failed to create team. Please try again.");
     }
   },
 });
@@ -217,10 +219,10 @@ useEffect(() => {
     setUpdatingTeamId(null); // ✅ clear once mutation is done
   },
   onSuccess: () => {
-    alert("Team updated successfully!");
+    toast.Success("Team updated successfully!");
   },
   onError: (error) => {
-    alert(error.message || "Something went wrong during update!");
+    toast.error(error.message || "Something went wrong during update!");
   },
 });
 
@@ -243,7 +245,7 @@ const deleteTeamMutation = useMutation({
     return teamId;
   },
   onSuccess: (deletedTeamId) => {
-    alert("Team deleted successfully!");
+    toast.Success("Team deleted successfully!");
     queryClient.invalidateQueries(["teams"]);
     setTeams((prev) => prev.filter((team) => team._id !== deletedTeamId));
   },
@@ -259,20 +261,21 @@ const handleDeleteTeam = (teamId) => {
 
   
 
-  if (loadingTeams || employeesLoading) return <div className="max-w-4xl mx-auto p-4">
-    <img src="../pascelloading.gif" alt="Loading" />
-  </div>;
-  if (teamError || employeesError)
-    return (
-      <div>
-        Error loading data: {teamError?.message || employeeError?.message}
-      </div>
-    );
+  // if (loadingTeams || employeesLoading) return <div className="max-w-4xl mx-auto p-4">
+  //   <img src="../pascelloading.gif" alt="Loading" />
+  // </div>;
+  // if (teamError || employeesError)
+  //   return (
+  //     <div>
+  //       Error loading data: {teamError?.message || employeeError?.message}
+  //     </div>
+  //   );
 
   return (
     <>
     <MobileNavbar title="Manage Team"/>
-    <div className="max-w-4xl mx-auto p-4 md:mb-0 mb-10 mt-11">
+    <PcNavbar title="Manage Team" />
+    <div className="max-w-4xl mx-auto p-4 md:mb-0 mb-10 mt-[50px]">
 
       {user?.teamName && user?._team ? (
   <p className="max-w-md mx-auto bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-md shadow-sm text-center text-sm sm:text-base">
@@ -317,99 +320,117 @@ const handleDeleteTeam = (teamId) => {
 
       )}
 
-      {/* Team List */}
-      {teams.map((team) => (
-  <div key={team._id} className="border p-4 rounded mb-4 shadow-sm">
-<h2 className="text-xl font-semibold text-gray-800">
-  {team.name} - Created by: {team.createdBy?.email || team.createdBy?.firstName || team.createdBy}
-  {/* {} */}
-</h2>
-
-
-
-{(!team || team?.createdBy?.email === user.email) && (
-  <form className="mt-2 flex flex-wrap gap-2">
-    <input
-      type="text"
-      placeholder="Add member ID"
-      className="border p-1 rounded"
-      required
-      value={memberId[team._id] || ""}
-      onChange={(e) =>
-        setMemberId({ ...memberId, [team._id]: e.target.value })
-      }
+{teams.length === 0 ? (
+  <div className="flex flex-col items-center justify-center py-12">
+    <img
+      src="../pascelloading.gif" // replace this with your loader/placeholder image path
+      alt="Loading teams..."
+      className=""
     />
-    <button
-      type="submit"
-      onClick={(e) => {
-        e.preventDefault();
-        updateTeamMutation.mutate({
-          id: team._id,
-          name: newName[team._id],
-          addMemberId: memberId[team._id],
-        });
-      }}
-      className={`text-white px-3 py-1 rounded transition-all duration-200 ${
-        updatingTeamId === team._id || !memberId[team._id]?.trim()
-          ? "bg-gray-400 cursor-not-allowed"
-          : "bg-green-600 hover:bg-green-700"
-      }`}
-      disabled={updatingTeamId === team._id || !memberId[team._id]?.trim()}
-    >
-      {updatingTeamId === team._id ? "Updating..." : "Update"}
-    </button>
-  </form>
-)}
-
-
-
-
-    <div className="mt-4">
-      <p className="text-sm text-gray-500 mb-2 font-medium">Team Members: {team.members.length}</p>
-      <p className="text-sm text-gray-500 mb-2 font-medium">
-        Total Team Tasks: {teamReport?.[team._id]?.teamTotal || 0}
-      </p>
-
-      <ul className="space-y-2">
-        {team.members?.map((m) => (
-          <li
-            key={m._id || m}
-            className="flex justify-between items-center bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition-all"
-          >
-            <span className="text-sm text-gray-700">
-              {m.firstName} {m.email}
-              <br />
-              ID: {m._id}
-              <br />
-              Total Tasks: {teamReport?.[team._id]?.report?.[m._id || m]?.total || 0}
-            </span>
-          {(!team || team?.createdBy?.email === user.email) && (
-            <button
-              onClick={() =>
-                removeMemberMutation.mutate({
-                  teamId: team._id,
-                  memberId: m._id,
-                })
-              }
-              className="text-xs text-red-500 hover:text-red-700 transition"
-            >
-              ❌ Remove
-            </button>
-          )}
-          </li>
-        ))}
-      </ul>
-    </div>
-{(!team || team?.createdBy?.email === user.email || user.isAdmin) && (
-    <button
-      onClick={() => handleDeleteTeam(team._id)}
-      className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-    >
-      Delete Team
-    </button>
-)}
+    <p className="text-gray-500 text-sm">Fetching your teams, please wait...</p>
   </div>
-))}
+) : (
+  <>
+    {/* Team List */}
+    {teams.map((team) => (
+      <div key={team._id} className="border p-4 rounded mb-4 shadow-sm">
+        <h2 className="text-xl font-semibold text-gray-800">
+          {team.name} - Created by:{" "}
+          {team.createdBy?.email || team.createdBy?.firstName || team.createdBy}
+        </h2>
+
+        {/* Member Add Form */}
+        {(!team || team?.createdBy?.email === user.email) && (
+          <form className="mt-2 flex flex-wrap gap-2">
+            <input
+              type="text"
+              placeholder="Add member ID"
+              className="border p-1 rounded"
+              required
+              value={memberId[team._id] || ""}
+              onChange={(e) =>
+                setMemberId({ ...memberId, [team._id]: e.target.value })
+              }
+            />
+            <button
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+                updateTeamMutation.mutate({
+                  id: team._id,
+                  name: newName[team._id],
+                  addMemberId: memberId[team._id],
+                });
+              }}
+              className={`text-white px-3 py-1 rounded transition-all duration-200 ${
+                updatingTeamId === team._id || !memberId[team._id]?.trim()
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+              disabled={
+                updatingTeamId === team._id || !memberId[team._id]?.trim()
+              }
+            >
+              {updatingTeamId === team._id ? "Updating..." : "Update"}
+            </button>
+          </form>
+        )}
+
+        {/* Team Details */}
+        <div className="mt-4">
+          <p className="text-sm text-gray-500 mb-2 font-medium">
+            Team Members: {team.members.length}
+          </p>
+          <p className="text-sm text-gray-500 mb-2 font-medium">
+            Total Team Tasks: {teamReport?.[team._id]?.teamTotal || 0}
+          </p>
+
+          <ul className="space-y-2">
+            {team.members?.map((m) => (
+              <li
+                key={m._id || m}
+                className="flex justify-between items-center bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition-all"
+              >
+                <span className="text-sm text-gray-700">
+                  {m.firstName} {m.email}
+                  <br />
+                  ID: {m._id}
+                  <br />
+                  Total Tasks:{" "}
+                  {teamReport?.[team._id]?.report?.[m._id || m]?.total || 0}
+                </span>
+                {(!team || team?.createdBy?.email === user.email) && (
+                  <button
+                    onClick={() =>
+                      removeMemberMutation.mutate({
+                        teamId: team._id,
+                        memberId: m._id,
+                      })
+                    }
+                    className="text-xs text-red-500 hover:text-red-700 transition"
+                  >
+                    ❌ Remove
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Delete Button */}
+        {(!team || team?.createdBy?.email === user.email || user.isAdmin) && (
+          <button
+            onClick={() => handleDeleteTeam(team._id)}
+            className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+          >
+            Delete Team
+          </button>
+        )}
+      </div>
+    ))}
+  </>
+)}
+
 
       
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import MobileNavbar from '@/components/MobileNavbar';
+import PcNavbar from '@/components/PcNavbar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -44,7 +45,8 @@ export default function TeamProgress() {
   return (
     <>
       <MobileNavbar title="Team Progress" />
-      <div className="bg-white min-h-screen p-6 rounded-xl shadow-md mt-10">
+      <PcNavbar title="Team Progress" />
+      <div className="bg-white min-h-screen p-6 rounded-xl shadow-md mt-[50px]">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data && data.length > 0 ? (
             data.map((team) => {
@@ -71,12 +73,12 @@ const CtimeAgo = team.createdAt
 
               return (
                 <div key={team._id} className="p-4 border rounded-lg shadow-sm bg-gray-50 relative">
-                  <h2 className="text-lg font-semibold text-indigo-600">{team.name}</h2>
+                  <h2 className="text-lg font-semibold text-purple-700">{team.name}</h2>
                   <p className="text-sm text-gray-600 mt-1">
                     Created on: {createdDate} / {CtimeAgo}
                   </p>
                   <p className="text-sm text-gray-600 mt-1">
-                    Updated on: {updatedDate} / {timeAgo}
+                    {/* Updated on: {updatedDate} / {timeAgo} */}
                   </p>
                   <p className="text-sm text-gray-600">Members: {team.members?.length || 0}</p>
                   <p className="text-sm text-gray-600 mt-1">

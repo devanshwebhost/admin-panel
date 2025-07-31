@@ -10,6 +10,7 @@ import TeamProgress from '@/app/admin/TeamProgress';
 import AssignTask from '@/app/admin/AssignTask';
 import Sidebar from '@/components/Sidebar';
 import AdminControlPanel from '@/app/admin/ControlAdmin';
+import PascelControl from '@/app/admin/Pascel-control';
 
 export default function DashboardPage({user}) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -32,6 +33,8 @@ export default function DashboardPage({user}) {
         return <AssignTask user={user} />;
       case 'adminControl':
         return <AdminControlPanel user={user}/> ;
+      case 'pascelcontrol':
+        return <PascelControl user={user}/> ;
       default:
         return <Dashboard />;
     }

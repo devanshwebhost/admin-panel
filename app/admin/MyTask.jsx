@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from "react-toastify";
 import {
   CheckCircle2Icon,
   XCircleIcon,
@@ -10,6 +11,7 @@ import {
   InfoIcon,
 } from 'lucide-react';
 import MobileNavbar from '@/components/MobileNavbar';
+import PcNavbar from '@/components/PcNavbar';
 
 export default function MyTasks({ user }) {
   const [tasks, setTasks] = useState([]);
@@ -71,7 +73,8 @@ const completedTasks = tasks.filter((t) => t.status === 'completed');
   return (
     <>
       <MobileNavbar title="My Tasks" />
-      <div className="max-w-4xl mx-auto p-6 text-sm bg-white rounded-xl shadow-md mt-10 mb-20">
+      <PcNavbar title="My tasks" />
+      <div className="max-w-4xl mx-auto  p-6 text-sm  mt-[50px] mb-20">
         {/* Tabs */}
         <div className="flex gap-4 mb-4">
           <button

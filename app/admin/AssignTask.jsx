@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import MobileNavbar from "@/components/MobileNavbar";
+import PcNavbar from "@/components/PcNavbar";
+import { toast } from "react-toastify";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
 
 export default function Assign({ user }) {
   // const [employees, setEmployees] = useState([]);
@@ -123,7 +128,7 @@ const {
       setSelectedEmployee("");
     },
     onError: (error) => {
-      alert(`❌ ${error.message}`);
+      toast.error(`❌ ${error.message}`);
     },
   });
 
@@ -131,12 +136,12 @@ const {
     e.preventDefault();
 
     if (!selectedEmployee || !taskTitle || !deadline) {
-      alert("Please fill in all required fields.");
+      toast.warn("Please fill in all required fields.");
       return;
     }
 
     if (!user || !user._id) {
-      alert("Admin ID (assignedBy) not found!");
+      toast.warn("Admin ID (assignedBy) not found!");
       return;
     }
 
@@ -158,12 +163,12 @@ const {
       return res.json();
     },
     onSuccess: () => {
-      alert("🗑️ Task deleted");
+      toast.success("🗑️ Task deleted");
       queryClient.invalidateQueries({ queryKey: ["tasks", user._id] });
     },
     onError: (err) => {
       console.error(err);
-      alert("❌ Failed to delete");
+      toast.error("❌ Failed to delete");
     },
   });
 
@@ -183,19 +188,20 @@ const {
       return result;
     },
     onSuccess: () => {
-      alert("✅ Task updated");
+      toast.success("✅ Task updated");
       queryClient.invalidateQueries({ queryKey: ["tasks", user._id] });
       setEditTaskId(null); // Close edit form
     },
     onError: (error) => {
-      alert(`❌ ${error.message}`);
+      toast.error(`❌ ${error.message}`);
     },
   });
 
   return (
     <>
       <MobileNavbar title="Assign Tasks" />
-      <div className="bg-white min-h-screen p-6 rounded-xl shadow-md mt-10">
+      <PcNavbar title="Assign Tasks" />
+      <div className="bg-white min-h-screen p-6 rounded-xl shadow-md mt-[50px]">
         <p className="text-gray-600 text-sm mb-2">
           Total Employees: <strong>{employees.length}</strong>
         </p>
@@ -278,7 +284,7 @@ const {
 
         {/* section of see the assigned tasks  */}
 
-        <div className="bg-white shadow rounded-lg p-6 mt-8 md:mb-0 mb-10">
+        <div className=" p-6 mt-8 md:mb-0 mb-10">
           <h2 className="text-xl font-bold mb-4 text-[#902ba9]">
             📋 All Assigned Tasks
           </h2>

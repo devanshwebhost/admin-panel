@@ -3,6 +3,8 @@ import MobileNavbar from '@/components/MobileNavbar';
 import { useEffect, useState } from 'react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import PcNavbar from '@/components/PcNavbar';
+import { toast } from "react-toastify";
 
 
 export default function AdminControlPanel({user}) {
@@ -92,7 +94,7 @@ const addProjectMutation = useMutation({
     return res.json();
   },
   onSuccess: (createdProject) => {
-    alert('Project created successfully');
+    toast.success('Project created successfully');
     setIsAdding(false)
     queryClient.invalidateQueries(['projects']); // Refresh project list
     setNewProject({
@@ -109,14 +111,14 @@ const addProjectMutation = useMutation({
   },
   onError: (error) => {
     console.error('Create error:', error);
-    alert('Could not create project. Try again.');
+    toast.error('Could not create project. Try again.');
   }
 });
 
 // Trigger function on form submit
 const handleAddProject = () => {
   if (!newProject.title || !newProject.type) {
-    return alert("Title and type are required");
+    return toast.warn("Title and type are required");
   }
 
   addProjectMutation.mutate({ ...newProject, createdBy: user?._id });
@@ -189,37 +191,32 @@ const deleteProject = async (projectId) => {
 const mutation = useMutation({
   mutationFn: deleteProject,
   onSuccess: () => {
-    alert('Project deleted successfully');
+    toast.success('Project deleted successfully');
     queryClient.invalidateQueries(['projects']); // 👈 Refetch the project list
   },
   onError: (err) => {
     console.error('Error deleting project:', err);
-    alert('Something went wrong while deleting the project');
+    toast.error('Something went wrong while deleting the project');
   },
 });
 
-
+// const isFormValid = Object.values(newProject).every(value => value?.toString().trim() !== "");
+const isFormComplete = Object.values(newProject).every(val => val !== '' && val !== null);
 
   return (
     
     <>
     <MobileNavbar title='Admin Control'/>
-    <div className="p-4 space-y-6 mb-12">
-      <h1 className="text-2xl font-bold text-[#0c52a2]">Admin Control Panel</h1>
+    <PcNavbar title="Admin Control" />
+    <div className="p-4 space-y-6 mb-12 mt-[50px]">
+      {/* <h1 className="text-2xl font-bold text-[#0c52a2]">Admin Control Panel</h1> */}
 
       {/* Add New Project */}
 <section className="my-4">
   <h2 className="text-xl font-semibold mb-2">Add New Project</h2>
   <div className="grid md:grid-cols-3 gap-4">
     <input type="text" placeholder="Project Title" className="border p-2 rounded" value={newProject.title} onChange={(e) => setNewProject({ ...newProject, title: e.target.value })} />
-    <input
-      type="date"
-      className="border p-2 rounded"
-      value={newProject.startDate}
-      onChange={(e) =>
-        setNewProject({ ...newProject, startDate: e.target.value })
-      }
-    />
+    <input type="date" className="border p-2 rounded" value={newProject.startDate} onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })} />
     <input type="text" placeholder="Description" className="border p-2 rounded" value={newProject.description} onChange={(e) => setNewProject({ ...newProject, description: e.target.value })} />
     <input type="number" placeholder="Amount" className="border p-2 rounded" value={newProject.amount} onChange={(e) => setNewProject({ ...newProject, amount: e.target.value })} />
     <input type="text" placeholder="Timeline" className="border p-2 rounded" value={newProject.timeline} onChange={(e) => setNewProject({ ...newProject, timeline: e.target.value })} />
@@ -231,14 +228,15 @@ const mutation = useMutation({
       <option value="upcoming">Upcoming</option>
       <option value="completed">Completed</option>
     </select>
+    
     <button
-  onClick={handleAddProject}
-  disabled={isAdding}
-  className={`bg-[#902ba9] text-white px-4 py-2 rounded ${isAdding ? 'opacity-60 cursor-not-allowed' : ''}`}
->
-  {isAdding ? 'Adding...' : 'Add Project'}
-</button>
-
+      onClick={handleAddProject}
+      disabled={isAdding || !isFormComplete}
+      className={`px-4 py-2 rounded text-white transition 
+        ${isAdding || !isFormComplete ? 'bg-[#902ba9] opacity-50 cursor-not-allowed' : 'bg-[#902ba9] hover:bg-[#6b22a4]'}`}
+    >
+      {isAdding ? 'Adding...' : 'Add Project'}
+    </button>
   </div>
 </section>
 {/* Search Projects */}

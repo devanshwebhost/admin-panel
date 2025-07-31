@@ -4,6 +4,8 @@ import { PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 import SignOutButton from "@/components/SignOut";
 import MobileNavbar from "@/components/MobileNavbar";
+import PcNavbar from "@/components/PcNavbar";
+import { toast } from "react-toastify";
 
 export default function Settings({ user }) {
   const [firstName, setFirstName] = useState(user.firstName || "");
@@ -93,28 +95,46 @@ export default function Settings({ user }) {
   return (
     <>
     <MobileNavbar title="Settings"/>
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md border md:mt-6 md:mb-0 mb-10 mt-10">
+    <PcNavbar title="Settings" />
+<div className="w-full max-w-[900px] mx-auto bg-white p-6 rounded-xl  
+                mt-[50px] mb-10
+                md:px-10 md:py-8">
 
-      <div className="text-sm text-gray-800 mb-4 space-y-1">
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Email Verified:</strong> {user.emailVerified ? "Yes" : "No"}</p>
-        <p><strong>Admin Verified:</strong> {user.adminVerified ? "Yes" : "No"}</p>
-        <p><strong>Account Created:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-        <p><strong>Last Updated:</strong> {new Date(user.updatedAt).toLocaleDateString()}</p>
-        <p><strong>Team Member ID:</strong> {user._id}</p>
-        <p><strong>Current Team Name:</strong> {user.teamName}</p>
-        <p><strong>Current Team ID:</strong> {user._team || "No Team Assigned"}</p>
-      </div>
+  {/* User Info */}
+  <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6 text-sm md:text-base">
+    <p><strong className="text-gray-600 font-medium">Email:</strong> <span className="text-gray-800">{user.email}</span></p>
+    <p><strong className="text-gray-600 font-medium">Email Verified:</strong> <span className="text-gray-800">{user.emailVerified ? "Yes" : "No"}</span></p>
+    <p><strong className="text-gray-600 font-medium">Admin Verified:</strong> <span className="text-gray-800">{user.adminVerified ? "Yes" : "No"}</span></p>
+    <p><strong className="text-gray-600 font-medium">Account Created:</strong> <span className="text-gray-800">{new Date(user.createdAt).toLocaleDateString()}</span></p>
+    <p><strong className="text-gray-600 font-medium">Last Updated:</strong> <span className="text-gray-800">{new Date(user.updatedAt).toLocaleDateString()}</span></p>
+    <p><strong className="text-gray-600 font-medium">Team Member ID:</strong> <span className="text-gray-800">{user._id}</span></p>
+    <p><strong className="text-gray-600 font-medium">Current Team Name:</strong> <span className="text-gray-800">{user.teamName || "N/A"}</span></p>
+    <p><strong className="text-gray-600 font-medium">Current Team ID:</strong> <span className="text-gray-800">{user._team || "No Team Assigned"}</span></p>
+  </div>
 
-      <div className="divide-y">
-        {renderField("First Name", "firstName", firstName, setFirstName)}
-        {renderField("Last Name", "lastName", lastName, setLastName)}
-        {renderField("Phone", "phone", phone, setPhone)}
-        {renderField("Address", "address", address, setAddress)}
-      </div>
-      <SignOutButton/>
-      {!user.isAdmin && <DeleteAccountSection user={user} />}
-    </div>
+  {/* Editable Fields Container */}
+  <div className="divide-y divide-gray-200 border-t border-b border-gray-200 -mx-6 md:-mx-10 px-6 md:px-10">
+    {renderField("First Name", "firstName", firstName, setFirstName)}
+    {renderField("Last Name", "lastName", lastName, setLastName)}
+    {renderField("Phone", "phone", phone, setPhone)}
+    {renderField("Address", "address", address, setAddress)}
+  </div>
+
+  {/* Buttons */}
+  <div className="mt-10 flex flex-col gap-4 max-w-sm mx-auto">
+    <SignOutButton
+      className="w-full py-3 rounded-lg bg-[#902ba9] text-white font-semibold text-base
+                 hover:bg-[#6b22a4] transition duration-200 shadow-md"
+    />
+    {!user.isAdmin && (
+      <DeleteAccountSection
+        user={user}
+        className="w-full py-3 rounded-lg bg-[#d93025] text-white font-semibold text-base
+                   hover:bg-[#a8221a] transition duration-200 shadow-md"
+      />
+    )}
+  </div>
+</div>
     </>
   );
 }

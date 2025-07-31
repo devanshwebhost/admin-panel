@@ -20,7 +20,7 @@ export default function NotificationBell({ tasks }) {
   return (
     <>
       {/* Bell Button */}
-      <div className="fixed md:top-10 top-15 right-6 z-50 cursor-pointer" onClick={togglePanel}>
+      <div className="fixed md:top-[15px] top-15 right-6 z-50 cursor-pointer" onClick={togglePanel}>
         <BellIcon className="h-6 w-6 text-gray-700" />
         {hasNew && (
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 animate-ping" />

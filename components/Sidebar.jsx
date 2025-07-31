@@ -8,6 +8,8 @@ import {
   UsersIcon,
   BarChart2Icon,
   ClipboardListIcon,
+  GavelIcon,
+  WandSparklesIcon,
 } from "lucide-react";
 
 const Sidebar = ({ setActiveTab, isAdmin }) => {
@@ -21,7 +23,8 @@ const Sidebar = ({ setActiveTab, isAdmin }) => {
     { label: "Manage Team", icon: UsersIcon, value: "manageTeam" },
     { label: "Team Progress", icon: BarChart2Icon, value: "teamProgress" },
     { label: "Assign Task", icon: ClipboardListIcon, value: "assignTask" },
-    { label: "Admin Control", icon: ClipboardListIcon, value: "adminControl" },
+    { label: "Admin Control", icon: GavelIcon, value: "adminControl" },
+    { label: "Pascel Control", icon: WandSparklesIcon, value: "pascelcontrol" },
   ];
 
   const filteredTabs = isAdmin

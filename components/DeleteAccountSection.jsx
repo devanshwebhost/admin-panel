@@ -31,13 +31,13 @@ export default function DeleteAccountSection({ user }) {
   };
 
   return (
-    <div className="bg-red-100 bg-opacity-5 border border-red-500 p-6 rounded-xl mt-[100px] text-left w-[100%]">
+    <div className="bg-red-100 bg-opacity-5 border border-red-500 p-6 rounded-xl mt-[10px] text-left w-[100%]">
       <h3 className="text-xl font-bold text-red-400">⚠️ Danger Zone</h3>
 
       <p className="text-sm text-red-500 mt-3">
         Deleting your account will:
         <ul className="list-disc list-inside mt-2 text-red-500 space-y-1">
-          <li>Permanently delete your profile, forms & API keys</li>
+          <li>Permanently delete your profile!</li>
           <li>Revoke all current and future access to this app</li>
           <li>Remove login capability using this email</li>
         </ul>

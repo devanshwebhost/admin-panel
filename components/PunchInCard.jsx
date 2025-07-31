@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { toast } from "react-toastify";
 
 export default function PunchInBanner({ user }) {
   const [showPunch, setShowPunch] = useState(false);
@@ -44,10 +45,10 @@ export default function PunchInBanner({ user }) {
 
       const result = await res.json();
       if (result.success) {
-        alert('Attendance marked!');
+        toast.success('Attendance marked!');
         setShowPunch(false);
       } else {
-        alert('Failed to mark attendance!');
+        toast.error('Failed to mark attendance!');
       }
     } catch (err) {
       console.error('Error marking attendance:', err);
