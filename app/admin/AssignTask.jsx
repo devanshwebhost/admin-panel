@@ -60,24 +60,26 @@ const {
   const now = new Date();
 
   const filteredTasks = tasks.filter((task) => {
-    if (!task.dueDate) return true; // safety check
-    const dueDate = new Date(task.dueDate);
+  if (!task.dueDate) return true; // safety check
+  const dueDate = new Date(task.dueDate);
+  const now = new Date();
 
-    if (filter === "deadlineCrossed") {
-      return dueDate < now;
-    }
+  if (filter === "deadlineCrossed") {
+    return dueDate < now && task.status !== "completed";
+  }
 
-    if (filter === "nearDeadline") {
-      const diffInDays = (dueDate - now) / (1000 * 60 * 60 * 24);
-      return diffInDays >= 0 && diffInDays <= 3;
-    }
+  if (filter === "nearDeadline") {
+    const diffInDays = (dueDate - now) / (1000 * 60 * 60 * 24);
+    return diffInDays >= 0 && diffInDays <= 3 && task.status !== "completed";
+  }
 
-    if (filter === "complete") {
-      return task.status === "completed";
-    }
+  if (filter === "complete") {
+    return task.status === "completed";
+  }
 
-    return true; // for 'new', 'old', or default
-  });
+  return true; // for 'new', 'old', or default
+});
+
 
   // Sort filtered tasks:
   const sortedTasks = filteredTasks.sort((a, b) => {

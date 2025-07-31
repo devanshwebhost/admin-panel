@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@tanstack/react-query": "^5.83.0",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",

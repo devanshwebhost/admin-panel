@@ -4,6 +4,7 @@ import MobileNavbar from "@/components/MobileNavbar";
 import { useEffect, useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 import PunchInBanner from "@/components/PunchInCard";
+import NotificationBell from "@/components/Notification";
 
 export default function Dashboard({ user }) {
   const [todos, setTodos] = useState([]);
@@ -64,7 +65,9 @@ useEffect(() => {
   setNewTodo('');
 };
 
-const editTodo = (index) => {
+const editTodo = (todoId) => {
+  const index = todos.findIndex(t => t._id === todoId);
+  if (index === -1) return;
   setEditIndex(index);
   setNewTodo(todos[index].text);
 };
@@ -90,7 +93,9 @@ const updateTodo = async () => {
   setNewTodo('');
 };
 
-const toggleComplete = async (index) => {
+const toggleComplete = async (todoId) => {
+  const index = todos.findIndex(t => t._id === todoId);
+  if (index === -1) return;
   const updatedTodo = { ...todos[index], completed: !todos[index].completed };
 
   const res = await fetch('/api/userTodos', {
@@ -108,9 +113,7 @@ const toggleComplete = async (index) => {
   setTodos(data.todos);
 };
 
-const deleteTodo = async (index) => {
-  const todoId = todos[index]._id;
-
+const deleteTodo = async (todoId) => {
   const res = await fetch('/api/userTodos', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -175,6 +178,7 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
       </h1>
 
     <PunchInBanner user={user}/>
+    <NotificationBell tasks={tasks}/>
 
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
   {/* Running Projects */}
@@ -225,86 +229,40 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
         </div>
 
         <div className="bg-white rounded shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">Pending Tasks</h2>
-          <ul className="list-disc ml-4">
-  {tasks.filter(task => task.status !== "completed").length > 0 ? (
-    tasks
-    .filter(task => task.status !== "completed")
-    .map(task => (
-      <li key={task._id}>{task.title}</li>
-    ))
-  ) : (
-    <li className="list-none text-gray-500 italic">No pending tasks!</li>
-  )}
-</ul>
-
-        </div>
-      </div>
-
-      <div className="bg-white rounded shadow p-4">
-        <h2 className="font-semibold text-lg mb-2">Notifications</h2>
-        <ul className="list-disc ml-4 text-sm text-gray-700">
-  {tasks.length > 0 ? (
-    (() => {
-      const latestTask = [...tasks].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      )[0];
-      
-      return (
-        <li>
-          Latest one <br/>
-          Task assigned:{" "}
-          <span className="font-medium">{latestTask.title}</span> <br />
-          <span className="text-gray-600">
-            By: {latestTask.assignedBy?.firstName || 'Unknown'} |{" "}
-            On: {new Date(latestTask.createdAt).toLocaleDateString()} <br/>
-            Status: {latestTask.status}
-          </span>
-        </li>
-      );
-    })()
-  ) : (
-    <li>No new tasks yet.</li>
-  )}
-</ul>
+  <h2 className="font-semibold text-lg mb-2">Pending Tasks</h2>
+  <ul className="list-disc ml-4">
+    {tasks.filter(task => task.status !== "completed").length > 0 ? (
+      [...tasks]
+        .filter(task => task.status !== "completed")
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // latest first
+        .map(task => (
+          <li key={task._id}>{task.title}</li>
+        ))
+    ) : (
+      <li className="list-none text-gray-500 italic">No pending tasks!</li>
+    )}
+  </ul>
+</div>
 
       </div>
 
       <div className="bg-white rounded shadow p-4">
         <h2 className="font-semibold text-lg mb-4">My Todos</h2>
-        <div className="flex gap-2 mb-4">
-  <button
-    onClick={() => setFilter('all')}
-    className={`px-3 py-1 rounded ${filter === 'all' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
+<div className="flex flex-wrap gap-2 mb-4 overflow-x-auto">
+  {['all', 'new', 'old', 'complete', 'incomplete'].map(type => (
+    <button
+      key={type}
+      onClick={() => setFilter(type)}
+      className={`px-2 py-1 text-xs md:px-4 md:py-2 md:text-sm rounded whitespace-nowrap transition-all duration-200 ${
+        filter === type ? 'bg-[#902ba9] text-white' : 'bg-gray-200 text-gray-800'
+      }`}
     >
-    All
-  </button>
-  <button
-    onClick={() => setFilter('new')}
-    className={`px-3 py-1 rounded ${filter === 'new' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-    >
-    New
-  </button>
-  <button
-    onClick={() => setFilter('old')}
-    className={`px-3 py-1 rounded ${filter === 'old' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-    >
-    Old
-  </button>
-  <button
-    onClick={() => setFilter('complete')}
-    className={`px-3 py-1 rounded ${filter === 'complete' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
-    >
-    Complete
-  </button>
-  <button
-  onClick={() => setFilter('incomplete')}
-  className={`px-3 py-1 rounded ${filter === 'incomplete' ? 'bg-[#902ba9] text-white' : 'bg-gray-200'}`}
->
-  Incomplete
-</button>
-
+      {type.charAt(0).toUpperCase() + type.slice(1)}
+    </button>
+  ))}
 </div>
+
+
 
         <div className="flex gap-2 mb-4">
           <input
@@ -350,19 +308,19 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
           </div>
           <div className="flex gap-2 ml-4">
             <button
-              onClick={() => toggleComplete(index)}
+              onClick={() => toggleComplete(todo._id)}
               className="text-green-600 text-sm"
               >
               {todo.completed ? "Undo" : "Complete"}
             </button>
             <button
-              onClick={() => editTodo(index)}
+              onClick={() => editTodo(todo._id)}
               className="text-blue-600 text-sm"
               >
               Edit
             </button>
             <button
-              onClick={() => deleteTodo(index)}
+              onClick={() => deleteTodo(todo._id)}
               className="text-red-600 text-sm"
               >
               Delete

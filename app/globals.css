@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+body,
+p,
+li,
+span,
+td {
+  @apply text-[10PX] md:text-base;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }

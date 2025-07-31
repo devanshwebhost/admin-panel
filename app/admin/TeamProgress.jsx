@@ -53,10 +53,21 @@ export default function TeamProgress() {
               const totalTasks = reportValues.reduce((sum, member) => sum + (member?.total || 0), 0);
               const progress = totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0;
               const isDelayed = progress < 50;
-              const createdDate = team.createdAt ? format(new Date(team.createdAt), 'dd MMM yyyy') : 'N/A';
-              const updatedDate = team.updatedAt ? format(new Date(team.updatedAt), 'dd MMM yyyy') : 'N/A';
-              const timeAgo = formatDistanceToNow(new Date(team.updatedAt), { addSuffix: true });
-              const CtimeAgo = formatDistanceToNow(new Date(team.createdAt), { addSuffix: true });
+              const createdDate = team.createdAt
+  ? format(new Date(team.createdAt), 'dd MMM yyyy')
+  : 'N/A';
+
+const updatedDate = team.updatedAt
+  ? format(new Date(team.updatedAt), 'dd MMM yyyy')
+  : 'N/A';
+
+const timeAgo = team.updatedAt
+  ? formatDistanceToNow(new Date(team.updatedAt), { addSuffix: true })
+  : 'N/A';
+
+const CtimeAgo = team.createdAt
+  ? formatDistanceToNow(new Date(team.createdAt), { addSuffix: true })
+  : 'N/A';
 
               return (
                 <div key={team._id} className="p-4 border rounded-lg shadow-sm bg-gray-50 relative">

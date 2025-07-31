@@ -16,6 +16,11 @@ export default function AdminControlPanel({user}) {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
 
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setNewProject({ startDate: today });
+  }, []);
+
   const [newProject, setNewProject] = useState({
   title: '',
   startDate: '',
@@ -207,7 +212,14 @@ const mutation = useMutation({
   <h2 className="text-xl font-semibold mb-2">Add New Project</h2>
   <div className="grid md:grid-cols-3 gap-4">
     <input type="text" placeholder="Project Title" className="border p-2 rounded" value={newProject.title} onChange={(e) => setNewProject({ ...newProject, title: e.target.value })} />
-    <input type="date" placeholder="Start Date" className="border p-2 rounded" value={newProject.startDate} onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })} />
+    <input
+      type="date"
+      className="border p-2 rounded"
+      value={newProject.startDate}
+      onChange={(e) =>
+        setNewProject({ ...newProject, startDate: e.target.value })
+      }
+    />
     <input type="text" placeholder="Description" className="border p-2 rounded" value={newProject.description} onChange={(e) => setNewProject({ ...newProject, description: e.target.value })} />
     <input type="number" placeholder="Amount" className="border p-2 rounded" value={newProject.amount} onChange={(e) => setNewProject({ ...newProject, amount: e.target.value })} />
     <input type="text" placeholder="Timeline" className="border p-2 rounded" value={newProject.timeline} onChange={(e) => setNewProject({ ...newProject, timeline: e.target.value })} />
