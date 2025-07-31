@@ -6,33 +6,51 @@ export default function PunchInBanner({ user }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+    const checkAttendance = async () => {
+      const now = new Date();
+      const hour = now.getHours();
+      const day = now.getDay();
+      const isWorkingDay = day !== 0 && day !== 6;
+      const isWithinTime = hour >= 8 && hour < 11;
 
-    const isWorkingDay = day !== 0 && day !== 6;
-    const isWithinTime = hour >= 8 && hour < 10;
+      if (!isWorkingDay || !isWithinTime || !user?._id) return;
 
-    if (isWorkingDay && isWithinTime) {
-      setShowPunch(true);
-    }
-  }, []);
+      try {
+        const res = await fetch(`/api/attendance?userId=${user._id}`);
+        const data = await res.json();
+
+        const today = new Date().toISOString().split('T')[0];
+        const alreadyMarked = data?.attendance?.some(
+          (entry) => new Date(entry.date).toISOString().split('T')[0] === today
+        );
+
+        if (!alreadyMarked) setShowPunch(true);
+      } catch (err) {
+        console.error('Error checking attendance:', err);
+      }
+    };
+
+    checkAttendance();
+  }, [user?._id]);
 
   const handlePunchIn = async () => {
     try {
       setLoading(true);
       const res = await fetch('/api/attendance', {
         method: 'POST',
-        body: JSON.stringify({ userId: user._id }),
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user._id }),
       });
+
       const result = await res.json();
       if (result.success) {
         alert('Attendance marked!');
         setShowPunch(false);
+      } else {
+        alert('Failed to mark attendance!');
       }
     } catch (err) {
-      console.error('Error marking attendance', err);
+      console.error('Error marking attendance:', err);
     } finally {
       setLoading(false);
     }
