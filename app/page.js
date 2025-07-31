@@ -1,31 +1,72 @@
 'use client';
 
+import Cubes from '@/components/Cube';
+import GlassIcons from '@/components/GlassIcons';
+import { FiFileText, FiLogIn, FiUserPlus, FiCloud,FiEdit, FiBarChart2 } from 'react-icons/fi';
+import CardSwap, { Card } from '@/components/Lanyard';
+import Lanyard from '@/components/Lanyard';
 import { useRouter } from 'next/navigation';
+// import CardSwap, { Card } from './CardSwap'
+
+// update with your own icons and colors
+
+  const items = [
+  { icon: <FiLogIn />, color: 'purple', label: 'Login', onClick: () => router.push('/login') },
+  { icon: <FiUserPlus />, color: 'gray', label: 'Sign Up', onClick: () => router.push('/signup') },
+];
+
 
 export default function StartPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-green-100 to-purple-100">
-      <div className="text-center p-6 max-w-xl bg-white shadow-2xl rounded-3xl border border-gray-200">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Team Indocs Media 😊</h1>
-        <p className="text-gray-600 text-lg mb-6">The future is here, and it's all about the AI and Creative</p>
+    <div className="overflow-hidden bg-black " style={{ height: '100vh', position: 'relative' }} >
+      <Cubes/>
+      {/* <div > */}
+<CardSwap
+  cardDistance={60}
+  verticalDistance={70}
+  delay={5000}
+  pauseOnHover={false}
+>
+  <Card className="dark:bg-gray-900 rounded-lg shadow-[0_0_15px_#902ba9] p-8 max-w-sm mx-auto font-sans">
+    <h3 className="text-purple-400 text-3xl font-extrabold mb-4 tracking-wide drop-shadow-[0_0_5px_rgba(144,43,169,0.8)]">
+      Welcome to Pascel Workspace
+    </h3>
+    <p className="text-white text-lg leading-relaxed font-light">
+      Empower your team management with seamless collaboration and smart automation.
+    </p>
+  </Card>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => router.push('/login')}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl text-lg transition shadow-md"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => router.push('/signup')}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-xl text-lg transition shadow-md"
-          >
-            Sign Up
-          </button>
+  <Card className="dark:bg-gray-900 rounded-lg shadow-[0_0_15px_#7b22a4] p-8 max-w-sm mx-auto font-sans">
+    <h3 className="text-purple-500 text-3xl font-extrabold mb-4 tracking-wide drop-shadow-[0_0_5px_rgba(123,34,164,0.8)]">
+      Intelligent AI Integration
+    </h3>
+    <p className="text-white text-lg leading-relaxed font-light">
+      Harness powerful AI features designed to simplify workflows and boost productivity.
+    </p>
+  </Card>
+
+  <Card className="dark:bg-gray-900 rounded-lg shadow-[0_0_15px_#6a1ea0] p-8 max-w-sm mx-auto font-sans">
+    <h3 className="text-purple-600 text-3xl font-extrabold mb-4 tracking-wide drop-shadow-[0_0_5px_rgba(106,30,160,0.8)]">
+      IDM Presents PSL
+    </h3>
+    <p className="text-white text-lg leading-relaxed font-light">
+      Manage your teams effortlessly — no headaches, just smooth collaboration.
+    </p>
+  </Card>
+</CardSwap>
+
+
+{/* </div> */}
+         <h1 className='text-white md:text-9xl fixed md:top-[10vh] md:pl-[50px] left-[50px] top-[100px] text-6xl md:left-[1vw]'>Pascel <br/> Workspace</h1>
+        <div className="fixed md:top-[50vh] md:right-[69vw] top-[40vh] right-[80px]">
+          <GlassIcons items={items} className="custom-class" />
+          <div className='flex gap-[100px] relative top-[-40px] left-[10px]'>
+          <h3 className='text-white relative '>Sing in</h3>
+          <h3 className='text-white relative '>Sing Up</h3>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
