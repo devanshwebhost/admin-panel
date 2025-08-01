@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+import Particles from '@/components/Particles';
+
 export default function SignupPage() {
   const [form, setForm] = useState({
     email: '',
@@ -54,9 +56,23 @@ export default function SignupPage() {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10 mt-[150px]" >
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Welcome To IDM 🎥 Create Account</h2>
+    <div className="min-h-screen flex-col flex items-center justify-center bg-black px-4">
+      {/* <h1 className='text-white'>Let,s Create Magic Together</h1> */}
+      {/* <SplashCursor/> */}
+      <div style={{ width: '100%', height: '600px', position: 'fixed' }}>
+  <Particles
+    particleColors={['#ffffff', '#ffffff']}
+    particleCount={200}
+    particleSpread={10}
+    speed={0.1}
+    particleBaseSize={100}
+    moveParticlesOnHover={true}
+    alphaParticles={false}
+    disableRotation={false}
+  />
+</div>
+      <div className="w-full max-w-md  border border-[#902ba9] shadow-2xl rounded-2xl p-4 sm:p-8 fixed " >
+        <h2 className="text-2xl font-bold text-center text-white mb-2">Welcome To IDM 🎥 Create Account</h2>
         <p className="text-sm text-gray-500 text-center mb-4">New Member 🤭 Ready to Create Future</p>
 
         {msg && (

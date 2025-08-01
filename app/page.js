@@ -71,7 +71,7 @@ hoverFillColor='#222'
 
 
 {/* </div> */}
-         <h1 className='text-white md:text-9xl fixed md:top-[10vh] md:pl-[50px] left-[50px] top-[100px] text-6xl md:left-[1vw]'>Pascel <br/> Workspace</h1>
+         <h1 className='text-white md:text-9xl fixed md:top-[10vh] md:pl-[50px] left-[50px] top-[100px] text-6xl md:left-[1vw]' >Pascel <br/> Workspace</h1>
         <div className="fixed md:top-[50vh] md:right-[69vw] top-[40vh] right-[80px]">
           <GlassIcons items={items} className="custom-class" />
           <div className='flex gap-[100px] relative top-[-40px] left-[10px]'>

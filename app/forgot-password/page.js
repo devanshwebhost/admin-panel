@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Waves from '@/components/Waves';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -40,13 +41,26 @@ export default function ForgotPasswordPage() {
   
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10">
+    <div className="min-h-screen flex items-center justify-center bg-black px-4">
+      <Waves
+  lineColor="#902ba9"
+  backgroundColor="#000"
+  waveSpeedX={0.02}
+  waveSpeedY={0.01}
+  waveAmpX={40}
+  waveAmpY={20}
+  friction={0.9}
+  tension={0.01}
+  maxCursorMove={120}
+  xGap={12}
+  yGap={36}
+/>
+      <div className=" md:w-[30vw] w-[90vw] bg-black border border-[#902ba9] shadow-2xl rounded-2xl p-8 sm:p-10  fixed z-[9999]">
         <div className="flex flex-col items-center mb-6">
           <div className="h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl text-[#902ba9] shadow-inner">
             🧐
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-800">Forgot Password?</h2>
+          <h2 className="mt-4 text-2xl font-bold text-white">Forgot Password?</h2>
           <p className="text-sm text-gray-500 mt-1 text-center">
             Enter your email address and we’ll send you an OTP to reset your password.
           </p>
@@ -65,7 +79,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full py-3 bg-[#902ba9] hover:bg-[#27182b] transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
+            className="w-full py-3 bg-[#902ba9] hover:bg-[#27182b] transition text-white rounded-xl font-semibold shadow-lg "
           >
             {loading ? 'Sending OTP...' : 'Send OTP'}
           </button>

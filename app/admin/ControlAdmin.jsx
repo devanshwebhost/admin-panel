@@ -393,7 +393,7 @@ const isFormComplete = Object.values(newProject).every(val => val !== '' && val 
         <p>👥 Members: {team.members.length}</p>
         <p>📈 Progress: {progress}%</p>
         <p>🕒 Created: {createdDate} ({CtimeAgo})</p>
-        <p>🔄 Last Updated: {updatedDate} ({timeAgo})</p>
+        {/* <p>🔄 Last Updated: {updatedDate} ({timeAgo})</p> */}
         <p className={isDelayed ? "text-red-600" : "text-green-600"}>
           {isDelayed ? "⚠️ Delayed" : "✅ On Track"}
         </p>

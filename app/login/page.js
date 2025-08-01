@@ -76,7 +76,7 @@ export default function LoginPage() {
             placeholder="Email Address"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-[#902ba9] focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             required
           />
           <input
@@ -85,7 +85,7 @@ export default function LoginPage() {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border text-purple-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full px-4 py-3 rounded-xl border text-[#902ba9] border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             required
           />
 

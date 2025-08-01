@@ -32,13 +32,7 @@ export default function TeamProgress() {
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto p-4">
-        <img src="../pascelloading.gif" alt="Loading" />
-      </div>
-    );
-  }
+  
 
   if (error) return <p>Error fetching teams</p>;
 
@@ -73,7 +67,7 @@ const CtimeAgo = team.createdAt
 
               return (
                 <div key={team._id} className="p-4 border rounded-lg shadow-sm bg-gray-50 relative">
-                  <h2 className="text-lg font-semibold text-purple-700">{team.name}</h2>
+                  <h2 className="text-lg font-semibold text-[#902ba9]">{team.name}</h2>
                   <p className="text-sm text-gray-600 mt-1">
                     Created on: {createdDate} / {CtimeAgo}
                   </p>
@@ -118,6 +112,7 @@ const CtimeAgo = team.createdAt
             })
           ) : (
             <p className="text-center text-gray-500 text-sm py-6">
+              <div className="w-full h-32 bg-gray-200 rounded-lg animate-pulse"></div>
               📭 No team created yet!
             </p>
           )}

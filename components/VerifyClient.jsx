@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Aurora from './Arora';
 
 export default function VerifyEmail() {
   const params = useSearchParams();
@@ -46,10 +47,16 @@ export default function VerifyEmail() {
   }, [token, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 sm:p-10 text-center">
+    <div className="min-h-screen flex items-center flex-col justify-center bg-black px-4">
+      <Aurora
+  colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
+  blend={0.5}
+  amplitude={1.0}
+  speed={0.5}
+/>
+      <div className=" md:w-[30vw] w-[90vw] bg-black shadow-xl border border-[#902ba9] p-8 sm:p-10 text-center fixed">
         <div className="text-4xl mb-4">{loading ? '🔄' : success ? '✅' : '❌'}</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Email Verification</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Email Verification</h2>
         <p className="text-gray-600 text-sm">{status}</p>
         {!success && !loading && (
           <button

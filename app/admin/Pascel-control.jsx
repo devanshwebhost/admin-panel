@@ -5,6 +5,7 @@ import axios from "axios";
 import MobileNavbar from "@/components/MobileNavbar";
 import PcNavbar from "@/components/PcNavbar";
 import { toast } from "react-toastify";
+import GlitchText from "@/components/Glitch";
 
 export default function PascelControl() {
   const [role, setRole] = useState("");
@@ -38,12 +39,7 @@ export default function PascelControl() {
     }
   };
 
-  if (loading) return (
-    <div className="text-center mt-20 text-gray-500">
-    <img src="../pascelloading.gif" alt="Loading Gif" />
-      <p className="text-sm">Loading AI settings...</p>
-    </div>
-  );
+  
 
   return (
     <>

@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import MobileNavbar from "@/components/MobileNavbar";
 import PcNavbar from "@/components/PcNavbar";
 import { toast } from "react-toastify";
+import GlitchText from "@/components/Glitch";
 
 export default function ManageTeam({ user }) {
   const [teamName, setTeamName] = useState("");
@@ -321,14 +322,33 @@ const handleDeleteTeam = (teamId) => {
       )}
 
 {teams.length === 0 ? (
-  <div className="flex flex-col items-center justify-center py-12">
-    <img
-      src="../pascelloading.gif" // replace this with your loader/placeholder image path
-      alt="Loading teams..."
-      className=""
-    />
-    <p className="text-gray-500 text-sm">Fetching your teams, please wait...</p>
-  </div>
+  <div className="mt-4 animate-pulse">
+  {/* Team Count Skeleton */}
+  <p className="text-sm text-gray-400 mb-2 font-medium">
+    <span className="inline-block h-4 w-40 bg-gray-300 rounded"></span>
+  </p>
+  <p className="text-sm text-gray-400 mb-4 font-medium">
+    <span className="inline-block h-4 w-48 bg-gray-300 rounded"></span>
+  </p>
+
+  {/* Member List Skeleton */}
+  <ul className="space-y-2">
+    {[...Array(3)].map((_, i) => (
+      <li
+        key={i}
+        className="flex justify-between items-center bg-gray-100 p-3 rounded-md"
+      >
+        <div className="space-y-2">
+          <div className="h-3 w-44 bg-gray-300 rounded"></div>
+          <div className="h-3 w-36 bg-gray-200 rounded"></div>
+          <div className="h-3 w-24 bg-gray-200 rounded"></div>
+        </div>
+        <div className="h-4 w-12 bg-gray-300 rounded"></div>
+      </li>
+    ))}
+  </ul>
+</div>
+
 ) : (
   <>
     {/* Team List */}

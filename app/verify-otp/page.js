@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import LetterGlitch from '@/components/LetterGlitch';
 
 export default function VerifyOTPPage() {
   const [otp, setOtp] = useState('');
@@ -65,13 +66,19 @@ export default function VerifyOTPPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10">
+    <div className="min-h-screen flex items-center justify-center bg-black ">
+      <LetterGlitch
+  glitchSpeed={100}
+  centerVignette={true}
+  outerVignette={false}
+  smooth={true}
+/>
+      <div className=" w-[90vw] md:w-[30vw] bg-black border border-purple-600 shadow-2xl rounded-2xl p-8 sm:p-10 fixed">
         <div className="flex flex-col items-center mb-6">
           <div className="h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center text-2xl text-purple-600 shadow-inner">
             🔑
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-800">Verify OTP</h2>
+          <h2 className="mt-4 text-2xl font-bold text-white">Verify OTP</h2>
           <p className="text-sm text-gray-500 mt-1">
             Enter the OTP sent to your email
           </p>
