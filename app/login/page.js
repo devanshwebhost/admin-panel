@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import DotGrid from '@/components/DotGrid';
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -42,9 +43,22 @@ export default function LoginPage() {
 };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white border border-gray-200 shadow-2xl rounded-2xl p-8 sm:p-10 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Welcome Back IDM Member 😃</h2>
+    <div className="min-h-screen flex items-center justify-center bg-black md:px-4">
+      <div style={{ width: '100%', height: '100vh', position: 'fixed' }}>
+  <DotGrid
+    dotSize={10}
+    gap={15}
+    baseColor="#271e37"
+    activeColor="#902ba9"
+    proximity={120}
+    shockRadius={250}
+    shockStrength={5}
+    resistance={750}
+    returnDuration={1.5}
+  />
+</div>
+      <div className="bg-black border border-purple-500 shadow-2xl md:p-8  p-4 sm:p-10 w-[80vw] md:max-w-md fixed">
+        <h2 className="text-2xl font-bold text-center  text-white">Welcome Back IDM Member 😃</h2>
         <p className="text-sm text-gray-500 text-center mt-1 mb-6">
           Please enter your login info🔑 to continue.
         </p>

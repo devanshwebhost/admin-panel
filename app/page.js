@@ -6,22 +6,34 @@ import { FiFileText, FiLogIn, FiUserPlus, FiCloud,FiEdit, FiBarChart2 } from 're
 import CardSwap, { Card } from '@/components/Lanyard';
 import Lanyard from '@/components/Lanyard';
 import { useRouter } from 'next/navigation';
+import Hyperspeed from '@/components/HyperSpeed';
+import Squares from '@/components/Square';
 // import CardSwap, { Card } from './CardSwap'
 
 // update with your own icons and colors
 
-  const items = [
-  { icon: <FiLogIn />, color: 'purple', label: 'Login', onClick: () => router.push('/login') },
-  { icon: <FiUserPlus />, color: 'gray', label: 'Sign Up', onClick: () => router.push('/signup') },
-];
+
 
 
 export default function StartPage() {
   const router = useRouter();
 
+    const items = [
+  { icon: <FiLogIn />, color: 'purple', label: 'Login', onClick: () => router.push('/login') },
+  { icon: <FiUserPlus />, color: 'gray', label: 'Sign Up', onClick: () => router.push('/signup') },
+];
+
   return (
     <div className="overflow-hidden bg-black " style={{ height: '100vh', position: 'relative' }} >
       <Cubes/>
+   <Squares 
+speed={0.5} 
+squareSize={40}
+direction='diagonal' // up, down, left, right, diagonal
+borderColor='#fff'
+hoverFillColor='#222'
+/>
+
       {/* <div > */}
 <CardSwap
   cardDistance={60}
@@ -66,6 +78,7 @@ export default function StartPage() {
           <h3 className='text-white relative '>Sing in</h3>
           <h3 className='text-white relative '>Sing Up</h3>
           </div>
+          <p className='md:hidden text-white text-center mt-20 '>Powerd By <span className='text-purple-600'>Teen Era PVT LTD</span></p>
         </div>
       </div>
   );
