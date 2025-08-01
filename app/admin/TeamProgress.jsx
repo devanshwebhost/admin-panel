@@ -66,7 +66,7 @@ const CtimeAgo = team.createdAt
   : 'N/A';
 
               return (
-                <div key={team._id} className="p-4 border rounded-lg shadow-sm bg-gray-50 relative">
+                <div key={team._id} className="p-4 border rounded-lg shadow-sm bg-gray-50 ">
                   <h2 className="text-lg font-semibold text-[#902ba9]">{team.name}</h2>
                   <p className="text-sm text-gray-600 mt-1">
                     Created on: {createdDate} / {CtimeAgo}

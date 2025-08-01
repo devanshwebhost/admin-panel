@@ -22,6 +22,7 @@ export default function Assign({ user }) {
   const [editDescription, setEditDescription] = useState("");
   const [editDeadline, setEditDeadline] = useState("");
   const queryClient = useQueryClient();
+  const [submitting, setSubmitting] = useState(false);
   const isCompleted = (task) => task.status === "completed";
 
   // Employees load karo
@@ -133,28 +134,36 @@ const {
   });
 
   const handleAssignTask = (e) => {
-    e.preventDefault();
+     // ✅ Prevent double click during load
+  e.preventDefault();
+  if (submitting || assignTaskMutation.isLoading) return;
 
-    if (!selectedEmployee || !taskTitle || !deadline) {
-      toast.warn("Please fill in all required fields.");
-      return;
-    }
 
-    if (!user || !user._id) {
-      toast.warn("Admin ID (assignedBy) not found!");
-      return;
-    }
+ if (!selectedEmployee || !taskTitle || !deadline) {
+    toast.warn("Please fill in all required fields.");
+    return;
+  }
 
-    const payload = {
-      title: taskTitle,
-      description,
-      deadline,
-      assignedTo: selectedEmployee,
-      assignedBy: user._id,
-    };
+  if (!user || !user._id) {
+    toast.warn("Admin ID (assignedBy) not found!");
+    return;
+  }
 
-    assignTaskMutation.mutate(payload);
+  setSubmitting(true);
+
+  const payload = {
+    title: taskTitle,
+    description,
+    deadline,
+    assignedTo: selectedEmployee,
+    assignedBy: user._id,
   };
+
+  assignTaskMutation.mutate(payload, {
+    onSettled: () => setSubmitting(false),
+  });
+};
+
 
   const deleteTaskMutation = useMutation({
     mutationFn: async (id) => {
@@ -269,13 +278,16 @@ const {
             />
           </div>
 
-          <button
-            type="submit"
-            className="bg-[#902ba9] text-white py-2 px-4 rounded hover:bg-purple-700"
-            disabled={assignTaskMutation.isLoading}
-          >
-            {assignTaskMutation.isLoading ? "Assigning..." : "Assign Task"}
-          </button>
+<button
+  type="submit"
+  disabled={assignTaskMutation.isLoading || submitting}
+  className={`bg-[#902ba9] text-white py-2 px-4 rounded hover:bg-purple-700 transition ${
+    assignTaskMutation.isLoading || submitting ? "opacity-50 cursor-not-allowed" : ""
+  }`}
+>
+  {assignTaskMutation.isLoading || submitting ? "Assigning..." : "Assign Task"}
+</button>
+
 
           {successMessage && (
             <p className="text-green-600 font-medium mt-2">{successMessage}</p>

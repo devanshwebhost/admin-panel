@@ -40,26 +40,26 @@ export default function MyTasks({ user }) {
   }, [user]);
 
   const markAsComplete = async (taskId) => {
-    // console.log(`hey id - ${taskId}`)
-    try {
-      await fetch(`/api/UserTask/${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: "completed" }),
-      });
+  try {
+    const res = await fetch(`/api/UserTask/${taskId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: "completed" }),
+    });
 
-      if (res.ok) {
-        const updated = await res.json();
-        setTasks((prev) =>
-          prev.map((t) => (t._id === taskId ? { ...t, ...updated.task } : t))
-        );
-      }
-    } catch (err) {
-      console.error("Failed to mark task as complete", err);
+    if (res.ok) {
+      const updated = await res.json();
+      setTasks((prev) =>
+        prev.map((t) => (t._id === taskId ? { ...t, ...updated.task } : t))
+      );
+      window.location.reload();
     }
-  };
+  } catch (err) {
+    console.error("Failed to mark task as complete", err);
+  }
+};
 
   const isOverdue = (deadline) => new Date(deadline) < new Date();
 
