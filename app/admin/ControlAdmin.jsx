@@ -259,7 +259,7 @@ const isFormComplete = Object.values(newProject).every(val => val !== '' && val 
       p.clientOrigin.toLowerCase().includes(searchQuery) ||
       p.clientName.toLowerCase().includes(searchQuery)
     ).length === 0 ? (
-      <li className="text-gray-500 italic">No projects</li>
+      <li className="text-gray-500 italic">Here is No projects to Showcase</li>
     ) : (
       Object.values(projects)
         .flat()
