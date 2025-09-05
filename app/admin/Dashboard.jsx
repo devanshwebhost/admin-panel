@@ -287,7 +287,7 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
 
 
 <div className="bg-white rounded shadow p-4">
-  <h2 className="font-semibold text-lg mb-2 text-purple-700">Projects Status</h2>
+  <h2 className="font-semibold text-lg mb-2 text-[#902ba9]">Projects Status</h2>
   <div className="h-48">
     {isLoading ? (
       <p className="text-center text-gray-400">Loading…</p>
