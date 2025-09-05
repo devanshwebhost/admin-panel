@@ -1,12 +1,8 @@
+// api/projects/[id]/route.js 
 import { NextResponse } from 'next/server';
 import {connectDB} from '@/lib/mongodb';
 import Project from '@/models/Project';
 
-export async function GET(_, { params }) {
-  await connectDB();
-  const project = await Project.findById(params.id);
-  return NextResponse.json(project);
-}
 
 export async function PUT(req, { params }) {
   await connectDB();

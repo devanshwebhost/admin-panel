@@ -8,7 +8,11 @@ const TaskSchema = new mongoose.Schema({
   assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
   team: { type: mongoose.Schema.Types.ObjectId, ref: "Team", default: null },
-
+  
+  // New fields for team name and ID
+  teamName: { type: String, default: null },
+  teamId: { type: mongoose.Schema.Types.ObjectId, ref: "Team", default: null },
+  
   status: { type: String, enum: ["pending", "in-progress", "completed"], default: "pending" },
   
   dueDate: { type: Date },

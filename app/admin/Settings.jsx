@@ -42,7 +42,7 @@ export default function Settings({ user }) {
       if (!res.ok) throw new Error("Failed to update");
       setEditingField(null);
     } catch (err) {
-      alert("Error updating field.");
+      toast.error("Error updating field.");
     } finally {
       setLoading(false);
     }

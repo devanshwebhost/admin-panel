@@ -1127,7 +1127,7 @@ const Hyperspeed = ({ effectOptions = {
   }, [effectOptions]);
 
   return (
-    <div id="lights" className=" md:hidden   w-full h-full fixed bottom-[100px !important]" ref={hyperspeed}></div>
+    <div id="lights" className=" md:hidden   w-full h-full fixed bottom-[]" ref={hyperspeed}></div>
   );
 }
 

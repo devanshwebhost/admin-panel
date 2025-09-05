@@ -75,7 +75,7 @@ export default function MyTasks({ user }) {
         <div className="flex gap-4 mb-4">
           <button
             className={`px-2 py-2 rounded  ${
-              tab === "active" ? "bg-indigo-600 text-white" : "bg-gray-100"
+              tab === "active" ? "bg-purple-600 text-white" : "bg-gray-100"
             }`}
             onClick={() => setTab("active")}
           >
@@ -83,7 +83,7 @@ export default function MyTasks({ user }) {
           </button>
           <button
             className={`px-2 py-2 rounded ${
-              tab === "completed" ? "bg-indigo-600 text-white" : "bg-gray-100"
+              tab === "completed" ? "bg-purple-600 text-white" : "bg-gray-100"
             }`}
             onClick={() => setTab("completed")}
           >

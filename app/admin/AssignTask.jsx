@@ -149,6 +149,14 @@ const {
     return;
   }
 
+   // Find the selected employee's data from the employees array
+  const selectedEmployeeData = employees.find(emp => emp._id === selectedEmployee);
+  
+  if (!selectedEmployeeData) {
+    toast.error("Selected employee data not found.");
+    return;
+  }
+
   setSubmitting(true);
 
   const payload = {
@@ -157,6 +165,8 @@ const {
     deadline,
     assignedTo: selectedEmployee,
     assignedBy: user._id,
+    teamId: selectedEmployeeData.team, // Pass the team ID
+    teamName: selectedEmployeeData.teamName,
   };
 
   assignTaskMutation.mutate(payload, {
@@ -386,6 +396,13 @@ const {
                     </p>
                     <p className="text-gray-500 text-xs">
                       Deadline: {new Date(task.dueDate).toLocaleDateString()}
+                    </p>
+
+                    <p className="text-gray-600 text-sm">
+                      Team When Assigned:{" "}
+                      <strong>
+                        {task.team} 
+                      </strong>
                     </p>
 
                     {/* ✅ Only show these for non-completed tasks */}

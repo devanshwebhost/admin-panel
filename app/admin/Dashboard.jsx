@@ -6,6 +6,31 @@ import { useQuery } from '@tanstack/react-query';
 import PunchInBanner from "@/components/PunchInCard";
 import NotificationBell from "@/components/Notification";
 import PcNavbar from "@/components/PcNavbar";
+import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from "recharts";
+
+
+// const projectStatusData = [
+//   { name: "Running", value: runningCount },
+//   { name: "Completed", value: completedCount },
+//   { name: "Upcoming", value: upcomingCount },
+// ];
+
+
+
+const staticHolidays = [
+  { name: "Independence Day", date: new Date("2025-08-15") },
+  { name: "Janmashtami", date: new Date("2025-08-16") },
+  { name: "MahaUtsav Radh Aastmi", date: new Date("2025-08-31") },
+  { name: "Mahatma Gandhi's Birthday", date: new Date("2025-10-02") },
+  { name: "Dussehra", date: new Date("2025-10-02") },
+  { name: "Diwali", date: new Date("2025-10-20") },
+  { name: "Guru Nanak's Birthday", date: new Date("2025-11-05") },
+  { name: "Christmas Day", date: new Date("2025-12-25") },
+];
+
+
+
+
 
 export default function Dashboard({ user }) {
   const [todos, setTodos] = useState([]);
@@ -13,8 +38,37 @@ export default function Dashboard({ user }) {
   const [editIndex, setEditIndex] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all' | 'new' | 'old' | 'complete'
+  const [projectFilter, setProjectFilter] = useState("current"); // current | lastWeek | lastMonth | lastYear | custom
+const [startDate, setStartDate] = useState("");
+const [endDate, setEndDate] = useState("");
+
   // const queryClient = useQueryClient();
   // const [projects, setProjects] = useState([]);
+
+  const filterProjects = () => {
+  let now = new Date();
+  let start;
+
+  if (projectFilter === "lastWeek") {
+    start = new Date(now.setDate(now.getDate() - 7));
+  } else if (projectFilter === "lastMonth") {
+    start = new Date(now.setMonth(now.getMonth() - 1));
+  } else if (projectFilter === "lastYear") {
+    start = new Date(now.setFullYear(now.getFullYear() - 1));
+  } else if (projectFilter === "custom") {
+    start = new Date(startDate);
+    now = new Date(endDate);
+  } else {
+    // current month default
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+
+  return projects.filter((p) => {
+    const projectDate = new Date(p.date); // ensure your API returns project.date
+    return projectDate >= start && projectDate <= now;
+  });
+};
+
 
 useEffect(() => {
   const getProjects = async () => {
@@ -160,15 +214,39 @@ const { data: projects = [], isLoading, error } = useQuery({
   queryFn: fetchProjects,
 });
 
-const runningCount = projects?.filter(p => p.type === 'running').length || 0;
-const completedCount = projects?.filter(p => p.type === 'completed').length || 0;
-const upcomingCount = projects?.filter(p => p.type === 'upcoming').length || 0;
+// some backends use "status" instead of "type"
+const getStatus = (p) => (p?.type || p?.status || '').toLowerCase();
+
+const runningCount   = projects.filter(p => getStatus(p) === 'running').length;
+const completedCount = projects.filter(p => getStatus(p) === 'completed').length;
+const upcomingCount  = projects.filter(p => getStatus(p) === 'upcoming').length;
+
+const projectStatusData = [
+  { name: 'Running',   value: runningCount },
+  { name: 'Completed', value: completedCount },
+  { name: 'Upcoming',  value: upcomingCount },
+];
+
+const COLORS = ["#8b5cf6", "#22c55e", "#eab308"];
 // Count present and absent days
 const presentDays = user?.attendance?.filter((a) => a.status === 'present').length || 0;
 const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length || 0;
  // kya yeh array hai?
 // console.log(user?.attendance)
 
+
+  const [nextHoliday, setNextHoliday] = useState(null);
+
+ useEffect(() => {
+    // This function finds the next holiday
+    const getNextHolidayFromList = () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); 
+      return staticHolidays.find(holiday => new Date(holiday.date) >= today);
+    };
+
+    setNextHoliday(getNextHolidayFromList());
+  }, []); 
 
   return (
     <>
@@ -181,34 +259,65 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
 
     <PunchInBanner user={user}/>
     <NotificationBell tasks={tasks}/>
+{/* 
+<div className="flex gap-2 mb-4">
+  <select
+    value={projectFilter}
+    onChange={(e) => setProjectFilter(e.target.value)}
+    className="border px-3 py-2 rounded"
+  >
+    <option value="current">Current</option>
+    <option value="lastWeek">Last Week</option>
+    <option value="lastMonth">Last Month</option>
+    <option value="lastYear">Last Year</option>
+    <option value="custom">Custom</option>
+  </select>
 
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-  {/* Running Projects */}
-  <div className="bg-purple-50 border-l-4 border-purple-500 rounded shadow p-4 transition hover:scale-[1.01]">
-    <h2 className="font-semibold text-lg mb-2 text-purple-700">Running Projects</h2>
-    <p className="text-gray-700">
-      {runningCount ?? 0} ongoing project{(runningCount ?? 0) !== 1 ? 's' : ''}
-    </p>
-  </div>
+  {projectFilter === "custom" && (
+    <>
+      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="border px-2 py-1 rounded" />
+      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="border px-2 py-1 rounded" />
+    </>
+  )}
+</div> */}
 
-  {/* Completed Projects */}
-  <div className="bg-green-50 border-l-4 border-green-500 rounded shadow p-4 transition hover:scale-[1.01]">
-    <h2 className="font-semibold text-lg mb-2 text-green-700">Completed Projects</h2>
-    <p className="text-gray-700">
-      {completedCount ?? 0} completed
-    </p>
-  </div>
 
-  {/* Upcoming Projects */}
-  <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded shadow p-4 transition hover:scale-[1.01]">
-    <h2 className="font-semibold text-lg mb-2 text-yellow-700">Upcoming Projects</h2>
-    <p className="text-gray-700">
-      {upcomingCount ?? 0} upcoming
-    </p>
+{/* Running Projects Graph */}
+{/* // ... (existing code) */}
+
+
+<div className="bg-white rounded shadow p-4">
+  <h2 className="font-semibold text-lg mb-2 text-purple-700">Projects Status</h2>
+  <div className="h-48">
+    {isLoading ? (
+      <p className="text-center text-gray-400">Loading…</p>
+    ) : projectStatusData.every(data => data.value === 0) ? (
+      <div className="flex items-center justify-center w-full h-full text-gray-500 italic">
+        No project data available.
+      </div>
+    ) : (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={projectStatusData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="value" barSize={20}>
+            {projectStatusData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    )}
   </div>
 </div>
 
-
+{/* ... other JSX ... */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded shadow p-4">
@@ -225,10 +334,24 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
   </p>
 </div>
 
-        <div className="bg-white rounded shadow p-4">
-          <h2 className="font-semibold text-lg mb-2">My Holidays</h2>
-          <p>Next Holiday: 15th August</p>
-        </div>
+    <div className="bg-white rounded shadow p-4">
+  <h2 className="font-semibold text-lg mb-2">Upcoming Holiday</h2>
+  <p>
+    {nextHoliday ? 
+      <>
+        Next Holiday: {nextHoliday.name} on{" "}
+        <span className="font-bold text-purple-700">
+          {new Date(nextHoliday.date).toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </span>
+      </>
+      : "No upcoming holidays this year."
+    }
+  </p>
+</div>
 
         <div className="bg-white rounded shadow p-4">
   <h2 className="font-semibold text-lg mb-2">Pending Tasks</h2>

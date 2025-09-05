@@ -253,48 +253,47 @@ const isFormComplete = Object.values(newProject).every(val => val !== '' && val 
 {/* All Projects List */}
 <section className="my-4">
   <h2 className="text-xl font-semibold mb-2">All Projects</h2>
-  <ul className="space-y-2">
-  {Object.values(projects).flat().filter((p) =>
-    p.title.toLowerCase().includes(searchQuery) ||
-    p.clientOrigin.toLowerCase().includes(searchQuery) ||
-    p.clientName.toLowerCase().includes(searchQuery)
-  ).length === 0 ? (
-    <li className="text-gray-500 italic">No projects</li>
-  ) : (
-    Object.values(projects)
-      .flat()
-      .filter((p) =>
-        p.title.toLowerCase().includes(searchQuery) ||
-        p.clientOrigin.toLowerCase().includes(searchQuery) ||
-        p.clientName.toLowerCase().includes(searchQuery)
-      )
-      .map((p) => (
-        <li key={p._id} className="border p-2 rounded shadow">
-          <h3 className="font-bold text-lg">{p.title}</h3>
-          <p className="text-sm text-gray-500">
-            Client: {p.clientName} ({p.clientOrigin})
-          </p>
-          <p className="text-sm text-gray-500">
-            Start: {p.startDate} | Type: {p.type}
-          </p>
-          <p className="text-sm">{p.description}</p>
-          <p className="text-sm text-green-600 font-medium">
-            Amount: ₹{p.amount}
-          </p>
-          <button
-  onClick={() => handleDelete(p._id)}
-  className="text-red-600 underline"
-  disabled={mutation.isPending}
->
-  {mutation.isPending ? 'Deleting...' : 'Delete'}
-</button>
-
-        </li>
-      ))
-  )}
-</ul>
-
+  <ul className="space-y-2 max-h-56 overflow-y-auto pr-2">
+    {Object.values(projects).flat().filter((p) =>
+      p.title.toLowerCase().includes(searchQuery) ||
+      p.clientOrigin.toLowerCase().includes(searchQuery) ||
+      p.clientName.toLowerCase().includes(searchQuery)
+    ).length === 0 ? (
+      <li className="text-gray-500 italic">No projects</li>
+    ) : (
+      Object.values(projects)
+        .flat()
+        .filter((p) =>
+          p.title.toLowerCase().includes(searchQuery) ||
+          p.clientOrigin.toLowerCase().includes(searchQuery) ||
+          p.clientName.toLowerCase().includes(searchQuery)
+        )
+        .map((p) => (
+          <li key={p._id} className="border p-2 rounded shadow">
+            <h3 className="font-bold text-lg">{p.title}</h3>
+            <p className="text-sm text-gray-500">
+              Client: {p.clientName} ({p.clientOrigin})
+            </p>
+            <p className="text-sm text-gray-500">
+              Start: {p.startDate} | Type: {p.type}
+            </p>
+            <p className="text-sm">{p.description}</p>
+            <p className="text-sm text-green-600 font-medium">
+              Amount: ₹{p.amount}
+            </p>
+            <button
+              onClick={() => handleDelete(p._id)}
+              className="text-red-600 underline"
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? 'Deleting...' : 'Delete'}
+            </button>
+          </li>
+        ))
+    )}
+  </ul>
 </section>
+
 
 
 
