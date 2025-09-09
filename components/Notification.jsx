@@ -20,7 +20,7 @@ export default function NotificationBell({ tasks }) {
   return (
     <>
       {/* Bell Button */}
-      <div className="fixed md:top-[15px] top-15 right-6 z-50 cursor-pointer" onClick={togglePanel}>
+      <div className="fixed md:top-[15px] top-15 right-6 z-[999] cursor-pointer" onClick={togglePanel}>
         <BellIcon className="h-6 w-6 text-gray-700" />
         {hasNew && (
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 animate-ping" />
@@ -31,7 +31,7 @@ export default function NotificationBell({ tasks }) {
       </div>
 
       {/* Notification Sidebar */}
-      <div className={` z-50 fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={` z-[999] fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-lg font-semibold">Notifications</h2>
           <button onClick={togglePanel} className="text-sm text-gray-600">Close</button>
