@@ -36,8 +36,13 @@ export default function RootLayout({ children }) {
         <meta property="og:description" content={metadata.description} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/logo.png" />
-        <meta property="og:url" content="https://yourwebsite.com" />
+        <meta property="og:url" content="https://pascel.vercel.app" />
         <meta name="twitter:card" content="summary_large_image" />
+        {/* Keywords for SEO */}
+    <meta
+      name="keywords"
+      content="pascel by idm, pascel workspace, indocs media workspace, IDM members, pascel platform"
+    />
         
         {/* Google site verification */}
         <meta
