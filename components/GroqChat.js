@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
 
-export default function GroqChat({ user }) {
+export default function GroqChat({ user, userContext }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const messagesEndRef = useRef(null);
+  const typingIntervalRef = useRef(null);
 
   // State to hold the AI message being typed out
   const [displayedAIMessage, setDisplayedAIMessage] = useState("");
@@ -24,12 +26,20 @@ export default function GroqChat({ user }) {
       }
     };
     loadMemory();
+
+    // Cleanup typing interval on unmount
+    return () => {
+      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+    };
   }, [user._id]);
 
   // Scroll to bottom when messages or displayedAIMessage changes
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, displayedAIMessage]);
+    const timeoutId = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+    return () => clearTimeout(timeoutId);
+  }, [messages, displayedAIMessage, typing]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -40,10 +50,14 @@ export default function GroqChat({ user }) {
     setInput("");
     setDisplayedAIMessage(""); // Clear previous typing message
 
+    // Clear any existing typing interval
+    if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+
     try {
       const res = await axios.post("/api/chat", {
         userMessage: input,
         userId: user._id,
+        userContext: userContext, // Yeh wo data hai jo Pascal.jsx ne fetch kiya hai
         userInfo: {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
@@ -57,11 +71,11 @@ export default function GroqChat({ user }) {
       // Typing effect: show AI reply one character at a time
       let i = 0;
       setDisplayedAIMessage("");
-      const intervalId = setInterval(() => {
+      typingIntervalRef.current = setInterval(() => {
         i++;
         setDisplayedAIMessage(fullReply.slice(0, i));
         if (i === fullReply.length) {
-          clearInterval(intervalId);
+          clearInterval(typingIntervalRef.current);
           setTyping(false);
           setMessages(prev => [...prev, { role: "assistant", content: fullReply }]);
           setDisplayedAIMessage("");
@@ -124,7 +138,11 @@ export default function GroqChat({ user }) {
                       ? "bg-purple-500 text-white"
                       : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                   }`}>
-                    {msg.content}
+                    <div className="prose dark:prose-invert max-w-none text-sm">
+                      <ReactMarkdown>
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -132,9 +150,13 @@ export default function GroqChat({ user }) {
               {/* Show AI typing effect message */}
               {typing && displayedAIMessage && (
                 <div className="flex justify-start">
-                  <div className="p-3 rounded-lg max-w-[70%] text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-mono">
-                    {displayedAIMessage}
-                    <span className="animate-pulse">|</span>
+                  <div className="p-3 rounded-lg max-w-[70%] text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                    <div className="prose dark:prose-invert max-w-none text-sm">
+                      <ReactMarkdown>
+                        {displayedAIMessage}
+                      </ReactMarkdown>
+                    </div>
+                    <span className="inline-block w-2 h-4 ml-1 bg-purple-500 animate-pulse align-middle"></span>
                   </div>
                 </div>
               )}

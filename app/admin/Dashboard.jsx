@@ -18,14 +18,19 @@ import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianG
 
 
 const staticHolidays = [
-  { name: "Independence Day", date: new Date("2025-08-15") },
-  { name: "Janmashtami", date: new Date("2025-08-16") },
-  { name: "MahaUtsav Radh Aastmi", date: new Date("2025-08-31") },
-  { name: "Mahatma Gandhi's Birthday", date: new Date("2025-10-02") },
-  { name: "Dussehra", date: new Date("2025-10-02") },
-  { name: "Diwali", date: new Date("2025-10-20") },
-  { name: "Guru Nanak's Birthday", date: new Date("2025-11-05") },
-  { name: "Christmas Day", date: new Date("2025-12-25") },
+  { name: "Republic Day", date: "2026-01-26" },
+  { name: "Holi", date: "2026-03-14" },
+  { name: "Eid-ul-Fitr", date: "2026-03-31" },
+  { name: "Ambedkar Jayanti", date: "2026-04-14" },
+  { name: "Independence Day", date: "2026-08-15" },
+  { name: "Janmashtami", date: "2026-08-16" },
+  { name: "MahaUtsav Radh Aastmi", date: "2026-08-31" },
+  { name: "Mahatma Gandhi's Birthday", date: "2026-10-02" },
+  { name: "Dussehra", date: "2026-10-02" },
+  { name: "Diwali", date: "2026-10-20" },
+  { name: "Bhai Dooj", date: "2026-10-22" },
+  { name: "Guru Nanak's Birthday", date: "2026-11-05" },
+  { name: "Christmas Day", date: "2026-12-25" },
 ];
 
 
@@ -41,6 +46,8 @@ export default function Dashboard({ user }) {
   const [projectFilter, setProjectFilter] = useState("current"); // current | lastWeek | lastMonth | lastYear | custom
 const [startDate, setStartDate] = useState("");
 const [endDate, setEndDate] = useState("");
+  const [holidays, setHolidays] = useState(staticHolidays);
+  const [nextHoliday, setNextHoliday] = useState(null);
 
   // const queryClient = useQueryClient();
   // const [projects, setProjects] = useState([]);
@@ -69,14 +76,6 @@ const [endDate, setEndDate] = useState("");
   });
 };
 
-
-useEffect(() => {
-  const getProjects = async () => {
-    const data = await fetchProjects();
-    setProjects(data);
-  };
-  getProjects();
-}, []);
 
   useEffect(() => {
   const fetchTodos = async () => {
@@ -235,18 +234,32 @@ const absentDays = user?.attendance?.filter((a) => a.status === 'absent').length
 // console.log(user?.attendance)
 
 
-  const [nextHoliday, setNextHoliday] = useState(null);
-
- useEffect(() => {
-    // This function finds the next holiday
-    const getNextHolidayFromList = () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); 
-      return staticHolidays.find(holiday => new Date(holiday.date) >= today);
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const res = await fetch("/api/admin");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.holidays && Array.isArray(data.holidays) && data.holidays.length > 0) {
+            setHolidays(data.holidays);
+          }
+        }
+      } catch (err) {
+        console.log("Using static holidays list");
+      }
     };
+    if (user?._id) fetchHolidays();
+  }, [user?._id]);
 
-    setNextHoliday(getNextHolidayFromList());
-  }, []); 
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const upcoming = holidays
+      .map(h => ({ ...h, dateObj: new Date(h.date) }))
+      .filter(h => h.dateObj >= today)
+      .sort((a, b) => a.dateObj - b.dateObj);
+    setNextHoliday(upcoming[0] || null);
+  }, [holidays]);
 
   return (
     <>

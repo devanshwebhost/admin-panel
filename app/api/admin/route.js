@@ -5,12 +5,13 @@ import { Setting } from "@/lib/models";
 // ✅ POST - Create or Update Full Info
 export async function POST(req) {
   await connectDB();
-  const { role, services } = await req.json();
+  const { role, services, holidays } = await req.json();
 
   const existing = await Setting.findOne();
   if (existing) {
     existing.role = role;
     existing.services = services;
+    if (holidays) existing.holidays = holidays;
     await existing.save();
     return NextResponse.json({ message: "Updated" });
   }
@@ -36,15 +37,19 @@ export async function PATCH(req) {
   await connectDB();
   const body = await req.json();
 
-  const existing = await Setting.findOne();
+  let existing = await Setting.findOne();
+
   if (!existing) {
-    return NextResponse.json({ message: "Settings not found" }, { status: 404 });
+    // Agar settings nahi milti toh naya create kar do (Upsert behavior)
+    existing = await Setting.create(body);
+    return NextResponse.json({ message: "Settings Created", setting: existing });
   }
 
   // Only update fields that are provided
-  if (body.role) existing.role = body.role;
-  if (body.services) existing.services = body.services;
+  if (body.role !== undefined) existing.role = body.role;
+  if (body.services !== undefined) existing.services = body.services;
+  if (body.holidays !== undefined) existing.holidays = body.holidays;
 
   await existing.save();
-  return NextResponse.json({ message: "Partially Updated" });
+  return NextResponse.json({ message: "Partially Updated", setting: existing });
 }

@@ -10,7 +10,9 @@ import GlitchText from "@/components/Glitch";
 export default function PascelControl() {
   const [role, setRole] = useState("");
   const [services, setServices] = useState("");
+  const [holidays, setHolidays] = useState("");
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
 
   // Fetch existing info on component mount
   useEffect(() => {
@@ -19,6 +21,7 @@ export default function PascelControl() {
         const res = await axios.get("/api/admin");
         setRole(res.data.role || "");
         setServices(res.data.services || "");
+        setHolidays(JSON.stringify(res.data.holidays || [], null, 2));
       } catch (err) {
         console.log("No existing settings found.");
       } finally {
@@ -30,12 +33,22 @@ export default function PascelControl() {
   }, []);
 
   const handleUpdate = async () => {
+    setUpdating(true);
     try {
-      await axios.patch("/api/admin", { role, services });
+      let parsedHolidays = [];
+      try {
+        parsedHolidays = JSON.parse(holidays);
+      } catch (e) {
+        toast.error("Invalid Holidays JSON format");
+        return;
+      }
+      await axios.patch("/api/admin", { role, services, holidays: parsedHolidays });
       toast.success("Pascel updated successfully!");
     } catch (error) {
       toast.error("Error updating Pascel");
       console.error(error);
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -79,13 +92,30 @@ export default function PascelControl() {
           />
         </div>
 
+        {/* Holidays */}
+        <div>
+          <label htmlFor="holidays" className="block font-semibold text-gray-700 mb-1">
+            Holidays JSON
+          </label>
+          <textarea
+            id="holidays"
+            placeholder='[{"name": "Republic Day", "date": "2025-01-26"}]'
+            value={holidays}
+            onChange={(e) => setHolidays(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#902ba9] transition"
+            rows={6}
+          />
+          <p className="text-xs text-gray-500 mt-1">Provide an array of objects with "name" and "date" (YYYY-MM-DD).</p>
+        </div>
+
         {/* Save Button */}
         <div className="">
           <button
             onClick={handleUpdate}
-            className="bg-[#902ba9] hover:bg-[#6b22a4] text-white md:px-6 px-4 md:py-3 py-2 rounded-xl text-base font-semibold transition-all w-full sm:w-auto"
+            disabled={updating}
+            className={`bg-[#902ba9] hover:bg-[#6b22a4] text-white md:px-6 px-4 md:py-3 py-2 rounded-xl text-base font-semibold transition-all w-full sm:w-auto ${updating ? "opacity-70 cursor-not-allowed" : ""}`}
           >
-            💾 Save Updates
+            {updating ? "⏳ Saving..." : "💾 Save Updates"}
           </button>
         </div>
       </div>

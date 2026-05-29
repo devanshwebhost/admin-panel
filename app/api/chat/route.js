@@ -4,28 +4,33 @@ import { connectDB } from "@/lib/mongodb";
 import { Memory, Setting } from "@/lib/models";
 
 export async function POST(req) {
-  const { userMessage, userId, userInfo } = await req.json();
+  const { userMessage, userId, userInfo, userContext } = await req.json();
   await connectDB();
 
-  const settings = await Setting.findOne() || {
-    role: "You are a helpful assistant.",
-    services: "General assistance",
-  };
+  // Use the rich userContext provided by the frontend if available.
+  // This contains real-time data like Todos and Tasks specific to this user.
+  let systemPrompt = userContext;
+
+  if (!systemPrompt) {
+    const settings = (await Setting.findOne()) || {
+      role: "You are a helpful assistant.",
+      services: "General assistance",
+    };
+    systemPrompt = `${settings.role}. Services: ${settings.services}. User: ${userInfo?.name || "User"}. 
+    Please use Markdown formatting for lists, tables, and bold text to make your responses easy to read.`;
+  }
 
   let memory = await Memory.findOne({ userId });
   if (!memory) {
     memory = await Memory.create({
       userId,
-      userInfo,
+      userInfo: userInfo || {},
       messages: [],
     });
   }
 
   const messages = [
-    {
-      role: "system",
-      content: `${settings.role}. Services: ${settings.services}. This is the user: Name: ${userInfo.name}, Email: ${userInfo.email}, Address: ${userInfo.address}, Phone: ${userInfo.phone}`,
-    },
+    { role: "system", content: systemPrompt },
     ...memory.messages.map(({ role, content }) => ({ role, content })),
     { role: "user", content: userMessage },
   ];
@@ -37,7 +42,7 @@ export async function POST(req) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "openai/gpt-oss-20b",
+      model: "llama-3.3-70b-versatile", // Use a more capable model on Groq
       messages,
     }),
   });
@@ -56,5 +61,3 @@ export async function POST(req) {
 
   return NextResponse.json({ reply: aiReply });
 }
-
-
