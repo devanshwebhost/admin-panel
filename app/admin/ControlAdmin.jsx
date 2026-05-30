@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 export default function AdminControlPanel({user}) {
   const [users, setUsers] = useState([]);
   const [isAdding, setIsAdding] = useState(false); // loader state
+  const [actionLoading, setActionLoading] = useState({});
   const [projects, setProjects] = useState({
     running: [],
     upcoming: [],
@@ -93,9 +94,11 @@ const addProjectMutation = useMutation({
     if (!res.ok) throw new Error('Failed to create project');
     return res.json();
   },
+  onMutate: () => {
+    setIsAdding(true);
+  },
   onSuccess: (createdProject) => {
     toast.success('Project created successfully');
-    setIsAdding(false)
     queryClient.invalidateQueries(['projects']); // Refresh project list
     setNewProject({
       title: '',
@@ -112,6 +115,9 @@ const addProjectMutation = useMutation({
   onError: (error) => {
     console.error('Create error:', error);
     toast.error('Could not create project. Try again.');
+  },
+  onSettled: () => {
+    setIsAdding(false);
   }
 });
 
@@ -128,24 +134,39 @@ const handleAddProject = () => {
 
 
   const handleVerifyEmail = async (userId) => {
-    await fetch(`/api/users/${userId}/verify`, { method: 'PATCH' });
-    fetchData();
+    setActionLoading(prev => ({ ...prev, [userId]: true }));
+    try {
+      await fetch(`/api/users/${userId}/verify`, { method: 'PATCH' });
+      await fetchData();
+    } finally {
+      setActionLoading(prev => ({ ...prev, [userId]: false }));
+    }
   };
 
-  const handleToggleLogin = async (userId, allowLogin) => {
-    await fetch(`/api/users/${userId}/toggle-login`, {
-      method: 'PATCH',
-      body: JSON.stringify({ allowLogin }),
-    });
-    fetchData();
+  const handleToggleLogin = async (userId, adminVerified) => {
+    setActionLoading(prev => ({ ...prev, [userId]: true }));
+    try {
+      await fetch(`/api/users/${userId}/toggle-login`, {
+        method: 'PATCH',
+        body: JSON.stringify({ adminVerified }),
+      });
+      await fetchData();
+    } finally {
+      setActionLoading(prev => ({ ...prev, [userId]: false }));
+    }
   };
 
   const handleDeleteUser = async (userId) => {
     const confirm = window.confirm('Are you sure you want to delete this user?');
     if (!confirm) return;
 
-    await fetch(`/api/users/${userId}`, { method: 'DELETE' });
-    fetchData();
+    setActionLoading(prev => ({ ...prev, [userId]: true }));
+    try {
+      await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+      await fetchData();
+    } finally {
+      setActionLoading(prev => ({ ...prev, [userId]: false }));
+    }
   };
   // console.log("Created By:", user._id);
 
@@ -325,24 +346,27 @@ const isFormComplete = Object.values(newProject).every(val => val !== '' && val 
           {!u.emailVerified && (
             <button
               onClick={() => handleVerifyEmail(u._id)}
-              className="text-blue-600 underline"
+              disabled={actionLoading[u._id]}
+              className={`text-blue-600 underline ${actionLoading[u._id] ? 'opacity-50 cursor-wait' : ''}`}
             >
-              Verify
+              {actionLoading[u._id] ? '...' : 'Verify'}
             </button>
           )}
           <button
-            onClick={() => handleToggleLogin(u._id, !u.allowLogin)}
-            className="text-yellow-600 underline"
+            onClick={() => handleToggleLogin(u._id, !u.adminVerified)}
+            disabled={actionLoading[u._id]}
+            className={`text-yellow-600 underline ${actionLoading[u._id] ? 'opacity-50 cursor-wait' : ''}`}
           >
-            {u.adminVerified ? 'Disable' : 'Allow'} Login
+            {actionLoading[u._id] ? 'Wait...' : (u.adminVerified ? 'Disable' : 'Allow') + ' Login'}
           </button>
 
           {user.isAdmin && (
             <button
               onClick={() => handleDeleteUser(u._id)}
-              className="text-red-600 underline"
+              disabled={actionLoading[u._id]}
+              className={`text-red-600 underline ${actionLoading[u._id] ? 'opacity-50 cursor-wait' : ''}`}
             >
-              Delete
+              {actionLoading[u._id] ? 'Deleting' : 'Delete'}
             </button>
           )}
         </td>

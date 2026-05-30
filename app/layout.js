@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "./providers";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import NotificationBell from '@/components/Notification';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <ToastContainer position="top-right" className={"z-[999]"} autoClose={3000} />
+          <NotificationBell />
           {children}
           <Analytics/>
         </Providers>

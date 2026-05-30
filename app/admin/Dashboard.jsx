@@ -18,19 +18,24 @@ import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianG
 
 
 const staticHolidays = [
+  { name: "New Year's Day", date: "2026-01-01" },
   { name: "Republic Day", date: "2026-01-26" },
-  { name: "Holi", date: "2026-03-14" },
-  { name: "Eid-ul-Fitr", date: "2026-03-31" },
-  { name: "Ambedkar Jayanti", date: "2026-04-14" },
+  { name: "Holi", date: "2026-03-04" },
+  { name: "Id-ul-Fitr", date: "2026-03-21" },
+  { name: "Ram Navami", date: "2026-03-26" },
+  { name: "Mahavir Jayanti", date: "2026-03-31" },
+  { name: "Good Friday", date: "2026-04-03" },
+  { name: "Buddha Purnima", date: "2026-05-01" },
+  { name: "Id-ul-Zuha (Bakrid)", date: "2026-05-27" },
+  { name: "Muharram", date: "2026-06-26" },
   { name: "Independence Day", date: "2026-08-15" },
-  { name: "Janmashtami", date: "2026-08-16" },
-  { name: "MahaUtsav Radh Aastmi", date: "2026-08-31" },
+  { name: "Id-e-Milad", date: "2026-08-26" },
+  { name: "Janmashtami", date: "2026-09-04" },
   { name: "Mahatma Gandhi's Birthday", date: "2026-10-02" },
-  { name: "Dussehra", date: "2026-10-02" },
-  { name: "Diwali", date: "2026-10-20" },
-  { name: "Bhai Dooj", date: "2026-10-22" },
-  { name: "Guru Nanak's Birthday", date: "2026-11-05" },
-  { name: "Christmas Day", date: "2026-12-25" },
+  { name: "Dussehra", date: "2026-10-20" },
+  { name: "Diwali", date: "2026-11-08" },
+  { name: "Guru Nanak's Birthday", date: "2026-11-24" },
+  { name: "Christmas Day", date: "2026-12-25" }
 ];
 
 

@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 // import Sidebar from './Sidebar';
 import Dashboard from '@/app/admin/Dashboard';
 import MyTasks from '@/app/admin//MyTask';
@@ -14,6 +16,19 @@ import PascelControl from '@/app/admin/Pascel-control';
 
 export default function DashboardPage({user}) {
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  const { data: teams = [] } = useQuery({
+    queryKey: ['teams'],
+    queryFn: async () => {
+      const res = await axios.get('/api/teams');
+      return res.data.teams || [];
+    },
+    staleTime: 10000,
+    cacheTime: 30000,
+    refetchOnWindowFocus: false,
+  });
+
+  const hasTeams = Array.isArray(teams) && teams.length > 0;
 
   const renderContent = () => {
     switch (activeTab) {
@@ -43,7 +58,7 @@ export default function DashboardPage({user}) {
   return (
     <div className="flex h-screen">
       {/* <Sidebar setActiveTab={setActiveTab} /> */}
-      <Sidebar setActiveTab={setActiveTab} isAdmin={user.isAdmin} />
+      <Sidebar setActiveTab={setActiveTab} isAdmin={user.isAdmin} hasTeams={hasTeams} />
       <div className="flex-1 overflow-y-auto">{renderContent()}</div>
     </div>
   );

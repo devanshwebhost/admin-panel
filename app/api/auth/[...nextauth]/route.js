@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export const authOptions = {
   providers: [
@@ -16,11 +16,19 @@ export const authOptions = {
       async authorize(credentials) {
         await connectDB();
         const user = await User.findOne({ email: credentials.email });
-        if (!user) throw new Error("User not found");
-        if (!user.emailVerified) throw new Error("Email not verified");
-        if (!user.adminVerified) throw new Error("Email not verified By Admin Ask Admin to verify Email");
+        
+        if (!user) {
+          throw new Error("User not found");
+        }
+        if (!user.emailVerified) {
+          throw new Error("Email not verified. Please check your inbox.");
+        }
+        if (!user.adminVerified) throw new Error("Admin ne aapka access deny kiya hua hai! Kripya Admin se sampark karein.");
+
         const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) throw new Error("Invalid credentials");
+        if (!isValid) {
+          throw new Error("Invalid email or password");
+        }
 
         return {
           id: user._id.toString(),

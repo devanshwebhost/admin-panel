@@ -28,19 +28,23 @@ export default function LoginPage() {
     });
     setLoading(false);
 
-  if (res.ok) {
-  router.push('/dashboard');
-} else {
-  // Extract error from URL if available
-  const error = new URLSearchParams(window.location.search).get('error');
+    if (res?.ok) {
+      router.push('/dashboard');
+      return;
+    }
 
-  if (error?.toLowerCase().includes('email not verified')) {
-    setMsg('⚠️ Please verify your email before logging in.');
-  } else {
-    setMsg('❌ Invalid email or password');
-  }
-}
-};
+    // Avoid reading credentials/error info from the URL (can leak to address bar)
+    const rawError = (res?.error || '').toLowerCase();
+    const err = rawError || '';
+
+    if (err.includes('email') && err.includes('verify')) {
+      setMsg('⚠️ Please verify your email before logging in.');
+    } else if (err.includes('admin') || err.includes('access') || err.includes('deny')) {
+      setMsg('Your access has been denied by the administrator. Please contact the administrator for assistance.');
+    } else {
+      setMsg('❌ Invalid email or password');
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black md:px-4">

@@ -126,13 +126,13 @@ export default function Settings({ user }) {
       className="w-full py-3 rounded-lg bg-[#902ba9] text-white font-semibold text-base
                  hover:bg-[#6b22a4] transition duration-200 shadow-md"
     />
-    {!user.isAdmin && (
+    {/* {!user.isAdmin && (
       <DeleteAccountSection
         user={user}
         className="w-full py-3 rounded-lg bg-[#d93025] text-white font-semibold text-base
                    hover:bg-[#a8221a] transition duration-200 shadow-md"
       />
-    )}
+    )} */}
   </div>
 </div>
     </>

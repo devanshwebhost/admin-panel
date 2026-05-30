@@ -12,7 +12,7 @@ import {
   WandSparklesIcon,
 } from "lucide-react";
 
-const Sidebar = ({ setActiveTab, isAdmin }) => {
+const Sidebar = ({ setActiveTab, isAdmin, hasTeams = false }) => {
   const [active, setActive] = useState("dashboard");
 
   const allTabs = [
@@ -27,9 +27,18 @@ const Sidebar = ({ setActiveTab, isAdmin }) => {
     { label: "Pascel Control", icon: WandSparklesIcon, value: "pascelcontrol" },
   ];
 
-  const filteredTabs = isAdmin
-    ? allTabs.filter(tab => tab.value !== "myTasks")
-    : allTabs;
+  const filteredTabs = allTabs.filter((tab) => {
+    const adminOnlyTabs = ["manageTeam", "teamProgress", "assignTask", "adminControl", "pascelcontrol"];
+    if (adminOnlyTabs.includes(tab.value)) {
+      if (tab.value === "teamProgress") {
+        return isAdmin && hasTeams;
+      }
+      return isAdmin;
+    }
+    // If not admin, hide admin tabs. Also, usually admins don't see "My Tasks" per your existing logic
+    if (tab.value === "myTasks") return !isAdmin; 
+    return true;
+  });
 
   const renderButton = ({ label, icon: Icon, value }) => (
     <button
