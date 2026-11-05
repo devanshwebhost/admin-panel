@@ -89,7 +89,7 @@ export default function StartPage() {
           <h3 className="text-white relative">Sign up</h3>
         </div>
         <p className="md:hidden text-slate-200 text-center mt-20">
-          Powered by <span className="text-cyan-300">Teen Era PVT LTD</span>
+          Powered by <span className="text-cyan-300">Indocs Media</span>
         </p>
       </div>
 
