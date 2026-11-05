@@ -4,27 +4,35 @@ import LightRays from "@/components/LightRays";
 
 export default function VerifyNotice() {
   return (
-    <div className="min-h-screen flex items-center justify-center  bg-black px-4">
-      <div style={{ width: '100vw', height: '100vh', position: 'fixed' }}>
-  <LightRays
-    raysOrigin="top-center"
-    raysColor="#902ba9"
-    raysSpeed={1.5}
-    lightSpread={1.8}
-    rayLength={1.5}
-    followMouse={true}
-    mouseInfluence={0.1}
-    noiseAmount={0.1}
-    distortion={0.05}
-    className="custom-rays"
-  />
-</div>
-      <div className="bg-black p-6 rounded-xl shadow-xl text-center max-w-md w-full fixed">
-        <h2 className="text-2xl font-bold text-white mb-2">😉 Signup successful! Please Verify Your Email</h2>
-        <p className="text-gray-600 mb-4">
-          🥰 We've sent a verification link to your email. Please check your inbox and verify your account to continue.
+    <div className="relative flex min-h-screen items-center justify-center bg-[#050b1a] px-6">
+      {/* Animated background */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#22d3ee"
+          raysSpeed={1.5}
+          lightSpread={1.8}
+          rayLength={1.5}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={0.05}
+          className="custom-rays"
+        />
+      </div>
+
+      {/* Card */}
+      <div className="relative z-10 mx-auto w-full max-w-sm rounded-lg border border-cyan-400/30 bg-[#0a1428] p-8 text-center shadow-[0_0_18px_rgba(34,211,238,0.35)]">
+        <h2 className="mb-3 text-2xl font-bold text-cyan-300">
+          😉 Signup successful! Please Verify Your Email
+        </h2>
+        <p className="mb-4 text-slate-200">
+          🥰 We've sent a verification link to your email. Please check your
+          inbox and verify your account to continue.
         </p>
-        <p className="text-sm text-gray-500">You can close this page after verifying.</p>
+        <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-blue-300 backdrop-blur md:text-base">
+          You can close this page after verifying.
+        </span>
       </div>
     </div>
   );
