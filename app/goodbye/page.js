@@ -1,48 +1,60 @@
-
 import RippleGrid from '@/components/RippelGrid';
 import Link from 'next/link';
 
 export default function GoodbyePage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black px-6 py-12 text-center">
-      <div style={{position: 'fixed', height: '500px', overflow: 'hidden'}}>
-  <RippleGrid
-    enableRainbow={false}
-    gridColor="#902ba9"
-    rippleIntensity={0.05}
-    gridSize={10}
-    gridThickness={15}
-    mouseInteraction={true}
-    mouseInteractionRadius={1.2}
-    opacity={0.8}
-  />
-</div>
-      <img
-        src="/logo.png" // 🖼️ Replace with your actual logo path
-        alt="IDM Logo"
-        width={100}
-        height={100}
-        className="mt-6 rounded-full"
-      />
-      
-      <div className='mt-15'>
+    <div className="relative min-h-screen bg-[#050b1a] px-6 py-12 text-center">
+      {/* Animated background */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        <RippleGrid
+          enableRainbow={false}
+          gridColor="#22d3ee"
+          rippleIntensity={0.05}
+          gridSize={10}
+          gridThickness={15}
+          mouseInteraction={true}
+          mouseInteractionRadius={1.2}
+          opacity={0.5}
+        />
+      </div>
 
-      <h1 className="text-4xl font-bold text-[#902ba9] mb-4 ">
-        You’ve been signed out!
-      </h1>
+      {/* Content */}
+      <div className="pointer-events-none relative z-10 flex min-h-[80vh] flex-col items-center justify-center">
+        <div className="pointer-events-auto mx-auto w-full max-w-sm rounded-lg border border-cyan-400/30 bg-[#0a1428] p-8 shadow-[0_0_18px_rgba(34,211,238,0.35)]">
+          <img
+            src="/logo.png"
+            alt="IDM Logo"
+            width={100}
+            height={100}
+            className="mx-auto mb-6 rounded-full"
+          />
 
-      <p className="text-gray-700 mb-6">
-        Thank you for visiting <span className="font-semibold text-[#902ba9]">PCL</span>. 
-        We look forward to seeing you again soon!
-      </p>
+          <h1 className="mb-4 text-4xl font-bold text-cyan-300">
+            You’ve been signed out!
+          </h1>
 
-      <Link
-        href="/login"
-        className="bg-[#902ba9] hover:bg-[#311e36] text-white px-6 py-2 rounded-lg transition relative z-10 "
-      >
-        Back to Login
-      </Link>
+          <p className="mb-6 text-slate-200">
+            Thank you for visiting{' '}
+            <span className="font-semibold text-blue-300">PCL</span>. We look
+            forward to seeing you again soon!
+          </p>
+
+          <Link
+            href="/login"
+            className="inline-block rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-6 py-2 text-white backdrop-blur transition hover:bg-cyan-400/20"
+          >
+            Back to Login
+          </Link>
+        </div>
+      </div>
+
+      {/* Trust strip */}
+      <div className="pointer-events-none fixed bottom-4 left-0 right-0 z-10 flex justify-center">
+        <span className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-indigo-300 backdrop-blur md:text-base">
+          Your session has ended securely
+        </span>
       </div>
     </div>
   );
 }
+
