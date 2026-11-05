@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { FiShield, FiLock } from 'react-icons/fi';
 import DotGrid from '@/components/DotGrid';
 
 export default function LoginPage() {
@@ -47,28 +48,38 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black md:px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#050b1a] px-4">
       <div style={{ width: '100%', height: '100vh', position: 'fixed' }}>
-  <DotGrid
-    dotSize={10}
-    gap={15}
-    baseColor="#271e37"
-    activeColor="#902ba9"
-    proximity={120}
-    shockRadius={250}
-    shockStrength={5}
-    resistance={750}
-    returnDuration={1.5}
-  />
-</div>
-      <div className="bg-black border border-purple-500 shadow-2xl md:p-8  p-4 sm:p-10 w-[80vw] md:max-w-md fixed">
-        <h2 className="text-2xl font-bold text-center  text-white">Welcome Back IDM Member 😃</h2>
-        <p className="text-sm text-gray-500 text-center mt-1 mb-6">
-          Please enter your login info🔑 to continue.
+        <DotGrid
+          dotSize={10}
+          gap={15}
+          baseColor="#16294f"
+          activeColor="#22d3ee"
+          proximity={120}
+          shockRadius={250}
+          shockStrength={5}
+          resistance={750}
+          returnDuration={1.5}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md rounded-2xl bg-[#0a1428]/95 border border-cyan-400/30 shadow-[0_0_30px_rgba(34,211,238,0.25)] backdrop-blur p-6 sm:p-10">
+        <div className="flex justify-center mb-4">
+          <div className="flex items-center justify-center w-14 h-14 rounded-full border border-cyan-400/40 bg-cyan-400/10 text-cyan-300">
+            <FiShield size={28} />
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-center text-white">Welcome back, IDM member</h2>
+        <p className="text-sm text-slate-400 text-center mt-1 mb-6">
+          Sign in with your verified account to continue.
         </p>
 
         {msg && (
-          <p className="text-red-500 text-sm text-center mb-4 animate-fade-in">
+          <p
+            role="alert"
+            className="text-red-300 text-sm text-center mb-4 px-3 py-2 rounded-lg border border-red-400/30 bg-red-500/10"
+          >
             {msg}
           </p>
         )}
@@ -77,27 +88,29 @@ export default function LoginPage() {
           <input
             type="email"
             name="email"
-            placeholder="Email Address"
+            autoComplete="email"
+            placeholder="Email address"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 text-[#902ba9] focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full px-4 py-3 rounded-xl bg-[#050b1a] border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/40 transition"
             required
           />
           <input
             type="password"
             name="password"
+            autoComplete="current-password"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border text-[#902ba9] border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            className="w-full px-4 py-3 rounded-xl bg-[#050b1a] border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/40 transition"
             required
           />
 
-          <div className="flex justify-between text-sm text-gray-600">
-            <Link href="/forgot-password" className="text-[#902ba9] hover:underline">
+          <div className="flex justify-between text-sm">
+            <Link href="/forgot-password" className="text-cyan-300 hover:underline">
               Forgot password?
             </Link>
-            <Link href="/signup" className="hover:underline">
+            <Link href="/signup" className="text-slate-300 hover:underline">
               New here? Sign up
             </Link>
           </div>
@@ -105,11 +118,16 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-[#902ba9] hover:bg-[#2c1d30] transition text-white rounded-xl font-semibold shadow-lg disabled:opacity-50"
+            className="w-full py-3 bg-blue-600 hover:bg-blue-500 transition text-white rounded-xl font-semibold shadow-lg shadow-blue-900/40 disabled:opacity-50"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
+        <div className="flex items-center justify-center gap-2 mt-6 text-xs text-slate-400">
+          <FiLock className="text-cyan-300" />
+          <span>Encrypted connection. Members only.</span>
+        </div>
       </div>
     </div>
   );
